@@ -1,9 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFrameworks>net8.0;net6.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Authors>Gennadiy Lokhov</Authors>
+        <Copyright>Copyright © Gennadiy Lokhov</Copyright>
+        <Description>Simple Option and Result monad implementation for C#</Description>
+        <PackageId>Functional.Monad</PackageId>
+        <PackageTags>functional;monad;option;result</PackageTags>
+        <PackageProjectUrl>https://github.com/glokhov/functional/</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Version>0.1.0</Version>
     </PropertyGroup>
-
+    <ItemGroup>
+        <None Include="../../../README.md" Pack="true" Visible="false" PackagePath="/" />
+    </ItemGroup>
 </Project>
