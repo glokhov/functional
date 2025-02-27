@@ -12,7 +12,7 @@
         <PackageProjectUrl>https://github.com/glokhov/functional/</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <Version>0.1.2</Version>
+        <Version>0.1.1</Version>
     </PropertyGroup>
     <ItemGroup>
         <None Include="../../../README.md" Pack="true" Visible="false" PackagePath="/" />
