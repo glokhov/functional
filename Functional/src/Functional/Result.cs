@@ -77,4 +77,8 @@ public readonly record struct Result<TValue, TError>
     public static implicit operator Result<TValue, TError>(Pure<TValue> pure) => Ok(pure.Value);
 
     public static implicit operator Result<TValue, TError>(Fail<TError> fail) => Err(fail.Error);
+
+    public static explicit operator Pure<TValue>(Result<TValue, TError> result) => result.Match(ok => new Pure<TValue>(ok), _ => throw new InvalidOperationException());
+
+    public static explicit operator Fail<TError>(Result<TValue, TError> result) => result.Match(_ => throw new InvalidOperationException(), error => new Fail<TError>(error));
 }

@@ -186,4 +186,42 @@ public sealed class ResultTests
         Result<string, string> result = new Fail<string>("Error");
         Assert.Equal(Result<string, string>.Err("Error"), result);
     }
+
+    [Fact]
+    public void If_Some_Explicit_Operator_Pure_Returns_Pure_Value()
+    {
+        var pure = (Pure<string>)Result<string, string>.Ok("Value");
+        Assert.Equal("Pure(Value)", pure.ToString());
+    }
+
+    [Fact]
+    public void If_None_Explicit_Operator_Pure_Throws_InvalidOperationException()
+    {
+        Assert.Throws<InvalidOperationException>(() => (Pure<string>)Result<string, string>.Err("Error"));
+    }
+
+    [Fact]
+    public void If_Error_Explicit_Operator_Fail_Returns_Fail_Error()
+    {
+        var fail = (Fail<string>)Result<string, string>.Err("Error");
+        Assert.Equal("Fail(Error)", fail.ToString());
+    }
+
+    [Fact]
+    public void If_Ok_Explicit_Operator_Fail_Throws_InvalidOperationException()
+    {
+        Assert.Throws<InvalidOperationException>(() => (Fail<string>)Result<string, string>.Ok("Value"));
+    }
+
+    [Fact]
+    public void Pure_Returns_Pure_Value()
+    {
+        Assert.Equal("Value", Result<string, string>.Ok("Value").Pure().Value);
+    }
+
+    [Fact]
+    public void Fail_Returns_Fail_Error()
+    {
+        Assert.Equal("Error", Result<string, string>.Err("Error").Fail().Error);
+    }
 }

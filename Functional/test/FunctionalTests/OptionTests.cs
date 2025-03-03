@@ -178,4 +178,42 @@ public sealed class OptionTests
         Option<string> option = new Fail<Unit>(Unit.Default);
         Assert.Equal(Option<string>.None, option);
     }
+
+    [Fact]
+    public void If_Some_Explicit_Operator_Pure_Returns_Pure_Value()
+    {
+        var pure = (Pure<string>)Option<string>.Some("Value");
+        Assert.Equal("Pure(Value)", pure.ToString());
+    }
+
+    [Fact]
+    public void If_None_Explicit_Operator_Pure_Throws_InvalidOperationException()
+    {
+        Assert.Throws<InvalidOperationException>(() => (Pure<string>)Option<string>.None);
+    }
+
+    [Fact]
+    public void If_None_Explicit_Operator_Fail_Returns_Unit()
+    {
+        var fail = (Fail<Unit>)Option<string>.None;
+        Assert.Equal("Fail(())", fail.ToString());
+    }
+
+    [Fact]
+    public void If_Some_Explicit_Operator_Fail_Throws_InvalidOperationException()
+    {
+        Assert.Throws<InvalidOperationException>(() => (Fail<Unit>)Option<string>.Some("Value"));
+    }
+
+    [Fact]
+    public void Pure_Returns_Pure_Value()
+    {
+        Assert.Equal("Value", Option<string>.Some("Value").Pure().Value);
+    }
+
+    [Fact]
+    public void Fail_Returns_Fail_Unit()
+    {
+        Assert.Equal(Unit.Default, Option<string>.None.Fail().Error);
+    }
 }
