@@ -1,4 +1,4 @@
-# C# Functional Programming
+# C# Functional Programming [![Nuget](https://img.shields.io/nuget/v/Functional.Monad)](https://www.nuget.org/packages/Functional.Monad)
 
 Simple ```Option``` and ```Result``` monad implementation for C#.
 
