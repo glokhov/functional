@@ -23,6 +23,9 @@ using static Functional.Prelude;
 ```csharp
 Option<int> some = Some(42);
 Option<int> none = None;
+
+int value = some.Pure().Value;
+Unit unit = none.Fail().Error;
 ```
 
 ```Result``` monads support either an ok value, or an error value:
@@ -30,4 +33,7 @@ Option<int> none = None;
 ```csharp
 Result<int, string> ok = Ok(42);
 Result<int, string> err = Err("Error description");
+
+int value = ok.Pure().Value;
+string error = err.Fail().Error;
 ```
