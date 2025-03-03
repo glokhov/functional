@@ -9,7 +9,7 @@
         <Description>Simple Option and Result monad implementation for C#</Description>
         <PackageId>Functional.Monad</PackageId>
         <PackageTags>functional;monad;option;result</PackageTags>
-        <PackageProjectUrl>https://github.com/glokhov/functional/</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/glokhov/functional</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryType>git</RepositoryType>
