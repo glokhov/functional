@@ -206,14 +206,14 @@ public sealed class OptionTests
     }
 
     [Fact]
-    public void Pure_Returns_Pure_Value()
+    public void Pure_Returns_AsPure_Value()
     {
-        Assert.Equal("Value", Option<string>.Some("Value").Pure().Value);
+        Assert.Equal("Value", Option<string>.Some("Value").AsPure().Value);
     }
 
     [Fact]
-    public void Fail_Returns_Fail_Unit()
+    public void Fail_Returns_AsFail_Unit()
     {
-        Assert.Equal(Unit.Default, Option<string>.None.Fail().Error);
+        Assert.Equal(Unit.Default, Option<string>.None.AsFail().Error);
     }
 }

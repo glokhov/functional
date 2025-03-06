@@ -11,29 +11,37 @@ global using Functional;
 global using static Functional.Prelude;
 ```
 
-Or the ```using``` directive in a single file: 
+Or the ```using``` directive in a single file:
 
 ```csharp
 using Functional;
 using static Functional.Prelude;
 ```
 
-```Option``` monads support either some value, or no value: 
+```Option``` monads support either some value, or no value:
 
 ```csharp
 Option<int> some = Some(42);
 Option<int> none = None;
 
-var value = some.Pure().Value; // 42
-var unit  = none.Fail().Error; // ()
+var value = some.Match(val => val, 0);
+var zero = none.Match(val => val, 0);
+
+Assert.Equal(42, value);
+Assert.Equal(0, zero);;
 ```
 
 ```Result``` monads support either an ok value, or an error value:
 
 ```csharp
-Result<int, string> ok  = Ok(42);
-Result<int, string> err = Err("There is no answer.");
-
-var value = ok.Pure().Value;  // 42
-var error = err.Fail().Error; // There is no answer.
+Result<int, string> ok = Ok(42);                       
+Result<int, string> error = Err("There is no answer"); 
+                                                       
+var value = ok.Match(val => val, 0);                   
+var zero = error.Match(val => val, 0);                 
+var message = error.Match(val => $"{val}", mes => mes);
+                                                       
+Assert.Equal(42, value);                               
+Assert.Equal(0, zero);                                 
+Assert.Equal("There is no answer", message);           
 ```
