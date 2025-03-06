@@ -28,7 +28,7 @@ int value = some.Match(val => val, 0);
 int zero = none.Match(val => val, 0);
 
 Assert.Equal(42, value);
-Assert.Equal(0, zero);;
+Assert.Equal(0, zero);
 ```
 
 ```Result``` monads support either an ok value, or an error value:
