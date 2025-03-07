@@ -2,13 +2,13 @@ namespace Functional;
 
 public static class OptionExtensions
 {
-    public static Pure<TValue> AsPure<TValue>(this Option<TValue> option) where TValue : notnull
+    public static Pure<TValue> AsPure<TValue>(this Option<TValue> self) where TValue : notnull
     {
-        return (Pure<TValue>)option;
+        return (Pure<TValue>)self;
     }
 
-    public static Fail<Unit> AsFail<TValue>(this Option<TValue> option) where TValue : notnull
+    public static TValue Unwrap<TValue>(this Option<TValue> self) where TValue : notnull
     {
-        return (Fail<Unit>)option;
+        return self.AsPure().Value;
     }
 }

@@ -224,4 +224,16 @@ public sealed class ResultTests
     {
         Assert.Equal("Error", Result<string, string>.Err("Error").AsFail().Error);
     }
+
+    [Fact]
+    public void Unwrap_Returns_Value()
+    {
+        Assert.Equal("Value", Result<string, string>.Ok("Value").Unwrap());
+    }
+
+    [Fact]
+    public void ExpectError_Returns_Error()
+    {
+        Assert.Equal("Error", Result<string, string>.Err("Error").ExpectError());
+    }
 }
