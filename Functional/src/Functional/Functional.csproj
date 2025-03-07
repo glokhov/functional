@@ -16,6 +16,9 @@
         <RepositoryUrl>https://github.com/glokhov/functional.git</RepositoryUrl>
         <Version>0.1.6</Version>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net48'">
         <PackageReference Include="IsExternalInit" Version="1.0.3" />
     </ItemGroup>

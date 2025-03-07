@@ -131,16 +131,48 @@ public readonly record struct Result<TValue, TError> where TValue : notnull wher
         }
     }
 
+    /// <summary>
+    /// Returns the string representation of this instance.
+    /// </summary>
+    /// <returns>The string representation of this instance.</returns>
     public override string ToString()
     {
         return _isOk ? $"Ok({_value})" : $"Err({_error})";
     }
 
+    /// <summary>
+    /// Converts a <c>Pure</c> value to a <c>Result</c> value.
+    /// </summary>
+    /// <param name="pure">The <c>Pure</c> value.</param>
+    /// <returns>The <c>Result</c> value.</returns>
     public static implicit operator Result<TValue, TError>(Pure<TValue> pure) => Ok(pure.Value);
 
+    /// <summary>
+    /// Converts a <c>Fail</c> value to a <c>Result</c> value.
+    /// </summary>
+    /// <param name="fail">The <c>Pure</c> value.</param>
+    /// <returns>The <c>Result</c> value.</returns>
     public static implicit operator Result<TValue, TError>(Fail<TError> fail) => Err(fail.Error);
 
-    public static explicit operator Pure<TValue>(Result<TValue, TError> result) => result.Match(ok => new Pure<TValue>(ok), _ => throw new InvalidCastException());
+    /// <summary>
+    /// Converts a <c>Result</c> value to a <c>Pure</c> value.
+    /// </summary>
+    /// <param name="result">The <c>Result</c> value.</param>
+    /// <returns>The <c>Pure</c> value.</returns>
+    /// <exception cref="InvalidCastException"><c>Result</c> value is <c>Err</c>.</exception>
+    public static explicit operator Pure<TValue>(Result<TValue, TError> result)
+    {
+        return result.Match(ok => new Pure<TValue>(ok), _ => throw new InvalidCastException());
+    }
 
-    public static explicit operator Fail<TError>(Result<TValue, TError> result) => result.Match(_ => throw new InvalidCastException(), error => new Fail<TError>(error));
+    /// <summary>
+    /// Converts a <c>Result</c> value to a <c>Fail</c> value.
+    /// </summary>
+    /// <param name="result">The <c>Result</c> value.</param>
+    /// <returns>The <c>Fail</c> value.</returns>
+    /// <exception cref="InvalidCastException"><c>Result</c> value is <c>Ok</c>.</exception>
+    public static explicit operator Fail<TError>(Result<TValue, TError> result)
+    {
+        return result.Match(_ => throw new InvalidCastException(), error => new Fail<TError>(error));
+    }
 }

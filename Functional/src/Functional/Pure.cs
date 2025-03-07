@@ -7,6 +7,10 @@ namespace Functional;
 /// <typeparam name="TValue">The type of the success value.</typeparam>
 public readonly record struct Pure<TValue>(TValue Value) where TValue : notnull
 {
+    /// <summary>
+    /// Returns the string representation of this instance.
+    /// </summary>
+    /// <returns>The string representation of this instance.</returns>
     public override string ToString()
     {
         return $"Pure({Value})";

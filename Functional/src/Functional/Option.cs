@@ -30,7 +30,7 @@ public readonly record struct Option<TValue> where TValue : notnull
     }
 
     /// <summary>
-    /// A <c>None</c> value.
+    /// The <c>None</c> value.
     /// </summary>
     public static readonly Option<TValue> None = default;
 
@@ -118,14 +118,37 @@ public readonly record struct Option<TValue> where TValue : notnull
         }
     }
 
+    /// <summary>
+    /// Returns the string representation of this instance.
+    /// </summary>
+    /// <returns>The string representation of this instance.</returns>
     public override string ToString()
     {
         return _isSome ? $"Some({_value})" : "None";
     }
 
+    /// <summary>
+    /// Converts a <c>Pure</c> value to an <c>Option</c> value.
+    /// </summary>
+    /// <param name="pure">The <c>Pure</c> value.</param>
+    /// <returns>The <c>Option</c> value.</returns>
     public static implicit operator Option<TValue>(Pure<TValue> pure) => Some(pure.Value);
 
-    public static implicit operator Option<TValue>(Fail<Unit> _) => default;
+    /// <summary>
+    /// Converts a <c>Fail</c> value to <c>None</c>.
+    /// </summary>
+    /// <param name="fail">The <c>Fail</c> value.</param>
+    /// <returns><c>None</c>.</returns>
+    public static implicit operator Option<TValue>(Fail<Unit> fail) => default;
 
-    public static explicit operator Pure<TValue>(Option<TValue> option) => option.Match(some => new Pure<TValue>(some), () => throw new InvalidCastException());
+    /// <summary>
+    /// Converts an <c>Option</c> value to a <c>Pure</c> value.
+    /// </summary>
+    /// <param name="option">The <c>Option</c> value.</param>
+    /// <returns>The <c>Pure</c> value.</returns>
+    /// <exception cref="InvalidCastException"><c>Option</c> value equals <c>None</c>.</exception>
+    public static explicit operator Pure<TValue>(Option<TValue> option)
+    {
+        return option.Match(some => new Pure<TValue>(some), () => throw new InvalidCastException());
+    }
 }

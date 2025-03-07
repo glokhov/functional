@@ -11,5 +11,10 @@ public readonly record struct Unit
     /// </summary>
     public static readonly Unit Default = default;
 
+
+    /// <summary>
+    /// Returns the string representation of this instance.
+    /// </summary>
+    /// <returns>().</returns>
     public override string ToString() => "()";
 }

@@ -1,5 +1,8 @@
 namespace Functional;
 
+/// <summary>
+/// Extensions for the type <c>Result</c>.
+/// </summary>
 public static class ResultExtensions
 {
     /// <summary>
@@ -11,8 +14,10 @@ public static class ResultExtensions
     /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
     /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
     /// <returns>The contained <c>Ok</c> value.</returns>
-    /// <exception cref="System.InvalidCastException">self value equals <c>Err</c>.</exception>
-    public static TValue Unwrap<TValue, TError>(this Result<TValue, TError> self) where TValue : notnull where TError : notnull
+    /// <exception cref="System.InvalidCastException">self value is <c>Err</c>.</exception>
+    public static TValue Unwrap<TValue, TError>(this Result<TValue, TError> self)
+        where TValue : notnull
+        where TError : notnull
     {
         return self.AsPure().Value;
     }
@@ -26,8 +31,10 @@ public static class ResultExtensions
     /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
     /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
     /// <returns>The contained <c>Err</c> value.</returns>
-    /// <exception cref="System.InvalidCastException">self value equals <c>Ok</c>.</exception>
-    public static TError ExpectError<TValue, TError>(this Result<TValue, TError> self) where TValue : notnull where TError : notnull
+    /// <exception cref="System.InvalidCastException">self value is <c>Ok</c>.</exception>
+    public static TError ExpectError<TValue, TError>(this Result<TValue, TError> self)
+        where TValue : notnull
+        where TError : notnull
     {
         return self.AsFail().Error;
     }
@@ -41,8 +48,10 @@ public static class ResultExtensions
     /// <typeparam name="TValue">The type of the contained <c>Some</c> value.</typeparam>
     /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
     /// <returns>This <c>Result</c> value as a <c>Pure</c> value.</returns>
-    /// <exception cref="System.InvalidCastException">self value equals <c>Err</c>.</exception>
-    public static Pure<TValue> AsPure<TValue, TError>(this Result<TValue, TError> self) where TValue : notnull where TError : notnull
+    /// <exception cref="System.InvalidCastException">self value is <c>Err</c>.</exception>
+    public static Pure<TValue> AsPure<TValue, TError>(this Result<TValue, TError> self)
+        where TValue : notnull
+        where TError : notnull
     {
         return (Pure<TValue>)self;
     }
@@ -56,8 +65,10 @@ public static class ResultExtensions
     /// <typeparam name="TValue">The type of the contained <c>Some</c> value.</typeparam>
     /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
     /// <returns>This <c>Result</c> value as a <c>Err</c> value.</returns>
-    /// <exception cref="System.InvalidCastException">self value equals <c>Ok</c>.</exception>
-    public static Fail<TError> AsFail<TValue, TError>(this Result<TValue, TError> self) where TValue : notnull where TError : notnull
+    /// <exception cref="System.InvalidCastException">self value is <c>Ok</c>.</exception>
+    public static Fail<TError> AsFail<TValue, TError>(this Result<TValue, TError> self)
+        where TValue : notnull
+        where TError : notnull
     {
         return (Fail<TError>)self;
     }

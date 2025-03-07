@@ -1,5 +1,8 @@
 namespace Functional;
 
+/// <summary>
+/// Static functions.
+/// </summary>
 public static class Prelude
 {
     /// <summary>

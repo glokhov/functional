@@ -7,6 +7,10 @@ namespace Functional;
 /// <typeparam name="TError">The type of the error value.</typeparam>
 public readonly record struct Fail<TError>(TError Error) where TError : notnull
 {
+    /// <summary>
+    /// Returns the string representation of this instance.
+    /// </summary>
+    /// <returns>The string representation of this instance.</returns>
     public override string ToString()
     {
         return $"Fail({Error})";
