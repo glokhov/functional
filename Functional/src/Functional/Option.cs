@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Functional;
 
-public readonly record struct Option<TValue>
+public readonly record struct Option<TValue> where TValue : notnull
 {
     private readonly TValue _value;
     private readonly bool _isSome;
@@ -25,12 +25,12 @@ public readonly record struct Option<TValue>
 
     public bool IsNone => !_isSome;
 
-    public Option<TResult> Map<TResult>(Func<TValue, TResult> func)
+    public Option<TResult> Map<TResult>(Func<TValue, TResult> func) where TResult : notnull
     {
         return _isSome ? Option<TResult>.Some(func(_value)) : Option<TResult>.None;
     }
 
-    public Option<TResult> Bind<TResult>(Func<TValue, Option<TResult>> func)
+    public Option<TResult> Bind<TResult>(Func<TValue, Option<TResult>> func) where TResult : notnull
     {
         return _isSome ? func(_value) : Option<TResult>.None;
     }

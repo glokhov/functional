@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Functional;
 
-public readonly record struct Result<TValue, TError>
+public readonly record struct Result<TValue, TError> where TValue : notnull where TError : notnull
 {
     private readonly TValue _value;
     private readonly TError _error;
@@ -37,12 +37,12 @@ public readonly record struct Result<TValue, TError>
 
     public bool IsErr => !_isOk;
 
-    public Result<TResult, TError> Map<TResult>(Func<TValue, TResult> func)
+    public Result<TResult, TError> Map<TResult>(Func<TValue, TResult> func) where TResult : notnull
     {
         return _isOk ? Result<TResult, TError>.Ok(func(_value)) : Result<TResult, TError>.Err(_error);
     }
 
-    public Result<TResult, TError> Bind<TResult>(Func<TValue, Result<TResult, TError>> func)
+    public Result<TResult, TError> Bind<TResult>(Func<TValue, Result<TResult, TError>> func) where TResult : notnull
     {
         return _isOk ? func(_value) : Result<TResult, TError>.Err(_error);
     }

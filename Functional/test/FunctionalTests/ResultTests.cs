@@ -214,13 +214,13 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void Pure_Returns_AsPure_Value()
+    public void AsPure_Returns_Pure_Value()
     {
         Assert.Equal("Value", Result<string, string>.Ok("Value").AsPure().Value);
     }
 
     [Fact]
-    public void Fail_Returns_AsFail_Error()
+    public void AsFail_Returns_Fail_Error()
     {
         Assert.Equal("Error", Result<string, string>.Err("Error").AsFail().Error);
     }
