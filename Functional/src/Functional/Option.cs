@@ -66,5 +66,5 @@ public readonly record struct Option<TValue> where TValue : notnull
 
     public static implicit operator Option<TValue>(Fail<Unit> _) => default;
 
-    public static explicit operator Pure<TValue>(Option<TValue> option) => option.Match(some => new Pure<TValue>(some), () => throw new InvalidOperationException());
+    public static explicit operator Pure<TValue>(Option<TValue> option) => option.Match(some => new Pure<TValue>(some), () => throw new InvalidCastException());
 }

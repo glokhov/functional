@@ -187,9 +187,9 @@ public sealed class OptionTests
     }
 
     [Fact]
-    public void If_None_Explicit_Operator_Pure_Throws_InvalidOperationException()
+    public void If_None_Explicit_Operator_Pure_Throws_InvalidCastException()
     {
-        Assert.Throws<InvalidOperationException>(() => (Pure<string>)Option<string>.None);
+        Assert.Throws<InvalidCastException>(() => (Pure<string>)Option<string>.None);
     }
 
     [Fact]

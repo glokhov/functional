@@ -195,9 +195,9 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void If_None_Explicit_Operator_Pure_Throws_InvalidOperationException()
+    public void If_None_Explicit_Operator_Pure_Throws_InvalidCastException()
     {
-        Assert.Throws<InvalidOperationException>(() => (Pure<string>)Result<string, string>.Err("Error"));
+        Assert.Throws<InvalidCastException>(() => (Pure<string>)Result<string, string>.Err("Error"));
     }
 
     [Fact]
@@ -208,9 +208,9 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void If_Ok_Explicit_Operator_Fail_Throws_InvalidOperationException()
+    public void If_Ok_Explicit_Operator_Fail_Throws_InvalidCastException()
     {
-        Assert.Throws<InvalidOperationException>(() => (Fail<string>)Result<string, string>.Ok("Value"));
+        Assert.Throws<InvalidCastException>(() => (Fail<string>)Result<string, string>.Ok("Value"));
     }
 
     [Fact]

@@ -78,7 +78,7 @@ public readonly record struct Result<TValue, TError> where TValue : notnull wher
 
     public static implicit operator Result<TValue, TError>(Fail<TError> fail) => Err(fail.Error);
 
-    public static explicit operator Pure<TValue>(Result<TValue, TError> result) => result.Match(ok => new Pure<TValue>(ok), _ => throw new InvalidOperationException());
+    public static explicit operator Pure<TValue>(Result<TValue, TError> result) => result.Match(ok => new Pure<TValue>(ok), _ => throw new InvalidCastException());
 
-    public static explicit operator Fail<TError>(Result<TValue, TError> result) => result.Match(_ => throw new InvalidOperationException(), error => new Fail<TError>(error));
+    public static explicit operator Fail<TError>(Result<TValue, TError> result) => result.Match(_ => throw new InvalidCastException(), error => new Fail<TError>(error));
 }
