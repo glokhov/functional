@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Functional;
 
 /// <summary>
@@ -11,22 +9,18 @@ namespace Functional;
 /// <typeparam name="TError">The type of the error value.</typeparam>
 public readonly record struct Result<TValue, TError> where TValue : notnull where TError : notnull
 {
-    private readonly TValue _value;
-    private readonly TError _error;
-    private readonly bool _isOk;
-
     private Result(TValue value)
     {
-        _value = value ?? throw new ArgumentNullException(nameof(value));
-        _error = default!;
-        _isOk = true;
+        Value = value ?? throw new ArgumentNullException(nameof(value));
+        Error = default!;
+        IsOk = true;
     }
 
     private Result(TError error)
     {
-        _error = error ?? throw new ArgumentNullException(nameof(error));
-        _value = default!;
-        _isOk = false;
+        Error = error ?? throw new ArgumentNullException(nameof(error));
+        Value = default!;
+        IsOk = false;
     }
 
     /// <summary>
@@ -49,87 +43,19 @@ public readonly record struct Result<TValue, TError> where TValue : notnull wher
         return new Result<TValue, TError>(error);
     }
 
+    internal TValue Value { get; }
+
+    internal TError Error { get; }
+
     /// <summary>
     /// Returns <c>true</c> if the result is <c>Ok</c>.
     /// </summary>
-    [SuppressMessage("ReSharper", "ConvertToAutoPropertyWhenPossible")]
-    public bool IsOk => _isOk;
+    public bool IsOk { get; }
 
     /// <summary>
     /// Returns <c>true</c> if the result is <c>Err</c>.
     /// </summary>
-    public bool IsErr => !_isOk;
-
-    /// <summary>
-    /// Transforms a <c>Result&lt;TValue, TError&gt;</c> into a <c>Result&lt;TOutput, TError&gt;</c>
-    /// by applying a <c>mapping</c> function to the success value, leaving the error value untouched.
-    /// </summary>
-    /// <param name="mapping">The function to apply to a contained value.</param>
-    /// <typeparam name="TOutput">The type of the output value.</typeparam>
-    /// <returns>The <c>Result&lt;TOutput, TError&gt;</c>.</returns>
-    public Result<TOutput, TError> Map<TOutput>(Func<TValue, TOutput> mapping) where TOutput : notnull
-    {
-        return _isOk ? Result<TOutput, TError>.Ok(mapping(_value)) : Result<TOutput, TError>.Err(_error);
-    }
-
-    /// <summary>
-    /// Transforms a <c>Result&lt;TValue, TError&gt;</c> into a <c>Result&lt;TOutput, TError&gt;</c>
-    /// by applying a <c>binder</c> function to the success value, leaving the error value untouched.
-    /// </summary>
-    /// <param name="binder">The function to apply to the success value.</param>
-    /// <typeparam name="TOutput">The type of the output value.</typeparam>
-    /// <returns>The <c>Result&lt;TOutput, TError&gt;</c>.</returns>
-    public Result<TOutput, TError> Bind<TOutput>(Func<TValue, Result<TOutput, TError>> binder) where TOutput : notnull
-    {
-        return _isOk ? binder(_value) : Result<TOutput, TError>.Err(_error);
-    }
-
-    /// <summary>
-    /// Matches two states of a <c>Result&lt;TValue, TError&gt;</c>
-    /// and applies an <c>ok</c> function to the success value, if the state is <c>Ok</c>,
-    /// or applies an <c>error</c> function to the error value, if the state is <c>Err</c>.
-    /// </summary>
-    /// <param name="ok">The function to apply to the success value.</param>
-    /// <param name="error">The function to apply to the error value.</param>
-    /// <typeparam name="TOutput">The type of the output value.</typeparam>
-    /// <returns>The output value.</returns>
-    public TOutput Match<TOutput>(Func<TValue, TOutput> ok, Func<TError, TOutput> error)
-    {
-        return _isOk ? ok(_value) : error(_error);
-    }
-
-    /// <summary>
-    /// Matches two states of a <c>Result&lt;TValue, TError&gt;</c>
-    /// and applies an <c>ok</c> function to the success value, if the state is <c>Ok</c>,
-    /// or returns an <c>error</c> value, if the state is <c>Err</c>.
-    /// </summary>
-    /// <param name="ok">The function to apply to the success value.</param>
-    /// <param name="error">The output value.</param>
-    /// <typeparam name="TOutput">The type of the output value.</typeparam>
-    /// <returns>The output value.</returns>
-    public TOutput Match<TOutput>(Func<TValue, TOutput> ok, TOutput error)
-    {
-        return _isOk ? ok(_value) : error;
-    }
-
-    /// <summary>
-    /// Matches two states of a <c>Result&lt;TValue, TError&gt;</c>
-    /// and applies an <c>ok</c> action to the success value, if the state is <c>Ok</c>,
-    /// or applies an <c>error</c> action to the error value, if the state is <c>Err</c>.
-    /// </summary>
-    /// <param name="ok">The action to apply to the success value.</param>
-    /// <param name="error">The action to apply to the error value.</param>
-    public void Match(Action<TValue> ok, Action<TError> error)
-    {
-        if (_isOk)
-        {
-            ok(_value);
-        }
-        else
-        {
-            error(_error);
-        }
-    }
+    public bool IsErr => !IsOk;
 
     /// <summary>
     /// Returns the string representation of this instance.
@@ -137,7 +63,7 @@ public readonly record struct Result<TValue, TError> where TValue : notnull wher
     /// <returns>The string representation of this instance.</returns>
     public override string ToString()
     {
-        return _isOk ? $"Ok({_value})" : $"Err({_error})";
+        return IsOk ? $"Ok({Value})" : $"Err({Error})";
     }
 
     /// <summary>
@@ -162,7 +88,7 @@ public readonly record struct Result<TValue, TError> where TValue : notnull wher
     /// <exception cref="InvalidCastException"><c>Result</c> value is <c>Err</c>.</exception>
     public static explicit operator Pure<TValue>(Result<TValue, TError> result)
     {
-        return result.Match(ok => new Pure<TValue>(ok), _ => throw new InvalidCastException());
+        return result.IsOk ? new Pure<TValue>(result.Value) : throw new InvalidCastException();
     }
 
     /// <summary>
@@ -173,6 +99,6 @@ public readonly record struct Result<TValue, TError> where TValue : notnull wher
     /// <exception cref="InvalidCastException"><c>Result</c> value is <c>Ok</c>.</exception>
     public static explicit operator Fail<TError>(Result<TValue, TError> result)
     {
-        return result.Match(_ => throw new InvalidCastException(), error => new Fail<TError>(error));
+        return result.IsErr ? new Fail<TError>(result.Error) : throw new InvalidCastException();
     }
 }
