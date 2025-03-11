@@ -27,6 +27,18 @@ public sealed class ResultExtensionsTests
     }
 
     [Fact]
+    public void ToOption_Ok_Returns_Some_Value()
+    {
+        Assert.Equal("Value", Result<string, string>.Ok("Value").ToOption().Unwrap());
+    }
+
+    [Fact]
+    public void ToOption_Err_Returns_None()
+    {
+        Assert.Equal(Unit.Default, Result<string, string>.Err("Error").ToOption().ExpectUnit());
+    }
+
+    [Fact]
     public void If_Ok_Map_Calls_Func()
     {
         var func = new StubFunc<string, string>("Result");

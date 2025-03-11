@@ -45,7 +45,7 @@ public static class ResultExtensions
     /// Instead, prefer to use the <c>Match</c> function.
     /// </summary>
     /// <param name="self">The <c>Result</c> value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Some</c> value.</typeparam>
+    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
     /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
     /// <returns>This <c>Result</c> value as a <c>Pure</c> value.</returns>
     /// <exception cref="System.InvalidCastException">self value is <c>Err</c>.</exception>
@@ -62,7 +62,7 @@ public static class ResultExtensions
     /// Instead, prefer to use the <c>Match</c> function.
     /// </summary>
     /// <param name="self">The <c>Result</c> value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Some</c> value.</typeparam>
+    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
     /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
     /// <returns>This <c>Result</c> value as a <c>Err</c> value.</returns>
     /// <exception cref="System.InvalidCastException">self value is <c>Ok</c>.</exception>
@@ -71,6 +71,20 @@ public static class ResultExtensions
         where TError : notnull
     {
         return (Fail<TError>)self;
+    }
+
+    /// <summary>
+    /// Converts a <c>Result</c> value to an <c>Option</c> value.
+    /// </summary>
+    /// <param name="value">The <c>Result</c> value.</param>
+    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
+    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
+    /// <returns>This <c>Result</c> value as a <c>Option</c> value.</returns>
+    public static Option<TValue> ToOption<TValue, TError>(this Result<TValue, TError> value)
+        where TValue : notnull
+        where TError : notnull
+    {
+        return value.Match(Option<TValue>.Some, Option<TValue>.None);
     }
 
     /// <summary>
