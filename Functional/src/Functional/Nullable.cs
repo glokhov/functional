@@ -11,7 +11,7 @@ public static class Nullable
     /// <param name="value">The input value.</param>
     /// <typeparam name="TValue">The type of the value.</typeparam>
     /// <returns>The result <c>Option</c> value.</returns>
-    public static Option<TValue> AsOption<TValue>(this TValue? value) where TValue : class
+    public static Option<TValue> ToOption<TValue>(this TValue? value) where TValue : class
     {
         return value is not null ? Option<TValue>.Some(value) : Option<TValue>.None;
     }
@@ -22,7 +22,7 @@ public static class Nullable
     /// <param name="value">The input value.</param>
     /// <typeparam name="TValue">The type of the value.</typeparam>
     /// <returns>The result <c>Option</c> value.</returns>
-    public static Option<TValue> AsOption<TValue>(this TValue? value) where TValue : struct
+    public static Option<TValue> ToOption<TValue>(this TValue? value) where TValue : struct
     {
         return value.HasValue ? Option<TValue>.Some(value.Value) : Option<TValue>.None;
     }

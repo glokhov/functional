@@ -7,7 +7,7 @@ public sealed class NullableTests
     {
         object obj = new { };
 
-        var option = obj.AsOption();
+        var option = obj.ToOption();
 
         Assert.Same(obj, option.Unwrap());
     }
@@ -17,7 +17,7 @@ public sealed class NullableTests
     {
         object obj = null!;
 
-        var option = obj.AsOption();
+        var option = obj.ToOption();
 
         Assert.True(option.IsNone);
     }
@@ -27,7 +27,7 @@ public sealed class NullableTests
     {
         int? nul = 42;
 
-        var option = nul.AsOption();
+        var option = nul.ToOption();
 
         Assert.Equal(nul.Value, option.Unwrap());
     }
@@ -37,7 +37,7 @@ public sealed class NullableTests
     {
         int? nul = null;
 
-        var option = nul.AsOption();
+        var option = nul.ToOption();
 
         Assert.True(option.IsNone);
     }
