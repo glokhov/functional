@@ -76,15 +76,15 @@ public static class ResultExtensions
     /// <summary>
     /// Converts a <c>Result</c> value to an <c>Option</c> value.
     /// </summary>
-    /// <param name="value">The <c>Result</c> value.</param>
+    /// <param name="self">This <c>Result</c> value.</param>
     /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
     /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
     /// <returns>This <c>Result</c> value as a <c>Option</c> value.</returns>
-    public static Option<TValue> ToOption<TValue, TError>(this Result<TValue, TError> value)
+    public static Option<TValue> ToOption<TValue, TError>(this Result<TValue, TError> self)
         where TValue : notnull
         where TError : notnull
     {
-        return value.Match(Option<TValue>.Some, Option<TValue>.None);
+        return self.Match(Option<TValue>.Some, Option<TValue>.None);
     }
 
     /// <summary>

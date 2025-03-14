@@ -62,6 +62,36 @@ public static class OptionExtensions
     }
 
     /// <summary>
+    /// Converts an <c>Option</c> value to a <c>Result</c> value.
+    /// </summary>
+    /// <param name="self">This <c>Option</c> value.</param>
+    /// <param name="error">The function to get the error value.</param>
+    /// <typeparam name="TValue">The type of the success value.</typeparam>
+    /// <typeparam name="TError">The type of the error value.</typeparam>
+    /// <returns>This <c>Option</c> value as a <c>Result</c> value.</returns>
+    public static Result<TValue, TError> ToResult<TValue, TError>(this Option<TValue> self, Func<TError> error)
+        where TValue : notnull
+        where TError : notnull
+    {
+        return self.Match(Result<TValue, TError>.Ok, () => Result<TValue, TError>.Err(error()));
+    }
+
+    /// <summary>
+    /// Converts an <c>Option</c> value to a <c>Result</c> value.
+    /// </summary>
+    /// <param name="self">This <c>Option</c> value.</param>
+    /// <param name="error">The error value.</param>
+    /// <typeparam name="TValue">The type of the success value.</typeparam>
+    /// <typeparam name="TError">The type of the error value.</typeparam>
+    /// <returns>This <c>Option</c> value as a <c>Result</c> value.</returns>
+    public static Result<TValue, TError> ToResult<TValue, TError>(this Option<TValue> self, TError error)
+        where TValue : notnull
+        where TError : notnull
+    {
+        return self.Match(Result<TValue, TError>.Ok, Result<TValue, TError>.Err(error));
+    }
+
+    /// <summary>
     /// Transforms an <c>Option&lt;TValue&gt;</c> into an <c>Option&lt;TOutput&gt;</c>
     /// by applying a <c>mapping</c> function to the contained value,
     /// or into <c>None</c>, if there is no contained value.

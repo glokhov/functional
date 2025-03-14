@@ -27,6 +27,30 @@ public sealed class OptionExtensionsTests
     }
 
     [Fact]
+    public void ToResult_Some_Returns_Some_Value()
+    {
+        Assert.Equal("Value", Option<string>.Some("Value").ToResult("Error").Unwrap());
+    }
+
+    [Fact]
+    public void ToResult_None_Returns_Error_Value()
+    {
+        Assert.Equal("Error", Option<string>.None.ToResult("Error").ExpectError());
+    }
+
+    [Fact]
+    public void ToResult_Some_Does_Not_Call_Error_Function()
+    {
+        Assert.Equal("Value", Option<string>.Some("Value").ToResult(() => "Error").Unwrap());
+    }
+
+    [Fact]
+    public void ToResult_None_Calls_Error_Function()
+    {
+        Assert.Equal("Error", Option<string>.None.ToResult(() => "Error").ExpectError());
+    }
+
+    [Fact]
     public void If_Some_Map_Calls_Func()
     {
         var func = new StubFunc<string, string>("Result");
