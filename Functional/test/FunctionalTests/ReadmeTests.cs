@@ -36,6 +36,33 @@ public sealed class ReadmeTests
     }
 
     [Fact]
+    public void Option_To_Result()
+    {
+        Option<int> some = Some(42);
+        Option<int> none = None;
+
+        Result<int, string> ok = some.ToResult("There is no answer");
+        Result<int, string> err = none.ToResult(() => "There is no answer");
+
+        Assert.True(ok.IsOk);
+        Assert.True(err.IsErr);
+        Assert.Equal("There is no answer", err.ExpectError());
+    }
+
+    [Fact]
+    public void Result_To_Option()
+    {
+        Result<int, string> ok = Ok(42);
+        Result<int, string> err = Err("There is no answer");
+
+        Option<int> some = ok.ToOption();
+        Option<int> none = err.ToOption();
+
+        Assert.True(some.IsSome);
+        Assert.True(none.IsNone);
+    }
+
+    [Fact]
     public void Nullable_Object_To_Option()
     {
         string? someString = "Forty two";
@@ -65,19 +92,6 @@ public sealed class ReadmeTests
 
         Assert.Equal(42, someValue);
         Assert.Equal(0, noneValue);
-    }
-
-    [Fact]
-    public void Result_To_Option()
-    {
-        Result<int, string> ok = Ok(42);
-        Result<int, string> err = Err("There is no answer");
-
-        Option<int> some = ok.ToOption();
-        Option<int> none = err.ToOption();
-
-        Assert.True(some.IsSome);
-        Assert.True(none.IsNone);
     }
 
     [Fact]

@@ -35,6 +35,29 @@ Assert.Equal(42, okValue);
 Assert.Equal(0, errValue);
 Assert.Equal("There is no answer", error);
 ```
+An ```Option``` cna be converted to a ```Result```
+```csharp
+Option<int> some = Some(42);
+Option<int> none = None;
+
+Result<int, string> ok = some.ToResult("There is no answer");
+Result<int, string> err = none.ToResult(() => "There is no answer");
+
+Assert.True(ok.IsOk);
+Assert.True(err.IsErr);
+Assert.Equal("There is no answer", err.ExpectError());
+```
+A ```Result``` can be converted to an ```Option```:
+```csharp
+Result<int, string> ok = Ok(42);
+Result<int, string> err = Err("There is no answer");
+
+Option<int> some = ok.ToOption();
+Option<int> none = err.ToOption();
+
+Assert.True(some.IsSome);
+Assert.True(none.IsNone);
+```
 A nullable object can be converted to an ```Option```:
 ```csharp
 string? someString = "Forty two";
@@ -84,17 +107,6 @@ int? noneValue = none.ToNullable();
 
 Assert.Equal(42, someValue);
 Assert.False(noneValue.HasValue);
-```
-A ```Result``` can be converted to an ```Option```:
-```csharp
-Result<int, string> ok = Ok(42);
-Result<int, string> err = Err("There is no answer");
-
-Option<int> some = ok.ToOption();
-Option<int> none = err.ToOption();
-
-Assert.True(some.IsSome);
-Assert.True(none.IsNone);
 ```
 A ```Result``` can be converted to a nullable object:
 ```csharp
