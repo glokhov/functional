@@ -1,8 +1,10 @@
 ﻿<Solution>
-    <Folder Name="/src/">
-        <Project Path="Functional\src\Functional\Functional.csproj" Type="Classic C#" />
-    </Folder>
-    <Folder Name="/test/">
-        <Project Path="Functional\test\FunctionalTests\FunctionalTests.csproj" Type="Classic C#" />
-    </Folder>
+  <Folder Name="/src/">
+    <Project Path="Functional\src\Functional.FSharp\Functional.FSharp.csproj" Type="Classic C#" />
+    <Project Path="Functional\src\Functional\Functional.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="Functional\test\Functional.FSharp.Tests\Functional.FSharp.Tests.csproj" Type="Classic C#" />
+    <Project Path="Functional\test\Functional.Tests\Functional.Tests.csproj" Type="Classic C#" />
+  </Folder>
 </Solution>

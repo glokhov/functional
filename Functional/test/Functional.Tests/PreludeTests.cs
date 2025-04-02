@@ -1,4 +1,4 @@
-namespace FunctionalTests;
+namespace Functional.Tests;
 
 public sealed class PreludeTests
 {

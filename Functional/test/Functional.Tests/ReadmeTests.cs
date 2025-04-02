@@ -3,7 +3,7 @@
 // ReSharper disable SuggestVarOrType_BuiltInTypes
 // ReSharper disable ConvertToConstant.Local
 
-namespace FunctionalTests;
+namespace Functional.Tests;
 
 public sealed class ReadmeTests
 {
