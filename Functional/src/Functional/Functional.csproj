@@ -11,7 +11,7 @@
         <PackageTags>functional;monad;option;result</PackageTags>
         <PackageProjectUrl>https://github.com/glokhov/functional</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageReadmeFile>CSharp.md</PackageReadmeFile>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/glokhov/functional.git</RepositoryUrl>
         <IncludeSymbols>true</IncludeSymbols>
@@ -19,6 +19,9 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <Version>0.2.0</Version>
     </PropertyGroup>
+    <ItemGroup>
+        <None Include="../../../CSharp.md" Pack="true" Visible="true" PackagePath="/" />
+    </ItemGroup>
     <ItemGroup>
         <None Include="../../../README.md" Pack="true" Visible="true" PackagePath="/" />
     </ItemGroup>

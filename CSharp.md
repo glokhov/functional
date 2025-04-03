@@ -1,4 +1,4 @@
-# C# Functional Programming [![Nuget](https://img.shields.io/nuget/v/Functional.Monad)](https://www.nuget.org/packages/Functional.Monad) F# Bridge [![Nuget](https://img.shields.io/nuget/v/Functional.Monad.FSharp)](https://www.nuget.org/packages/Functional.Monad.FSharp)
+# C# Functional Programming
 Simple ```Option``` and ```Result``` monad implementation for C#.
 ## Getting started
 Use the ```global using``` directive for the whole project:

@@ -1,7 +1,7 @@
 # C# Functional Programming
 Functions for converting between C# ```Option``` / ```Result``` types and F# ```FSharpOption``` / ```FSharpValueOption``` / ```FSharpResult``` types.
 ## Motivation
-If you are using F# components in your C# code, some functions return values of the ```FSharpOption```, ```FSharpValueOption``` or ```FSharpResult``` types. The support of those types in C# is very limited. You can use this component to convert the F# types to the [```Option``` and ```Result``` implementations for C#](https://github.com/glokhov/functional).
+If you are using F# components in your C# code, some functions return values of the ```FSharpOption```, ```FSharpValueOption``` or ```FSharpResult``` types. The support of those types in C# is very limited. You can use this component to convert F# types to the [```Option``` and ```Result``` implementations for C#](https://github.com/glokhov/functional).
 ```csharp
 var fsharpResult      = FSharpResult<int, string>.NewOk(42);
 var fsharpOption      = FSharpOption<int>.Some(42);
@@ -12,9 +12,15 @@ Import ```Functional.FSharp``` namespace:
 ```csharp
 using Functional.FSharp;
 ```
-Use extenstion methods ```ToResult``` and ```ToOption```:
+Use extenstion methods ```ToResult``` and ```ToOption``` to convert to C#:
 ```csharp
 Result<int, string> result = fsharpResult.ToResult();
 Option<int> option         = fsharpOption.ToOption();
 Option<int> valueOption    = fsharpValueOption.ToOption();
+```
+Use extension methods ```ToResult```, ```ToResult``` and ```ToOption``` to convert back:
+```csharp
+FSharpResult<int, string> fsharpResult   = result.ToFSharpResult();
+FSharpOption<int> fsharpOption           = option.ToFSharpOption();
+FSharpValueOption<int> fsharpValueOption = valueOption.ToFSharpValueOption();
 ```
