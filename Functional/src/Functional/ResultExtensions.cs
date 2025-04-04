@@ -76,7 +76,7 @@ public static class ResultExtensions
     /// <summary>
     /// Converts a <c>Result</c> value to an <c>Option</c> value.
     /// </summary>
-    /// <param name="self">This <c>Result</c> value.</param>
+    /// <param name="self">The <c>Result</c> value.</param>
     /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
     /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
     /// <returns>This <c>Result</c> value as a <c>Option</c> value.</returns>
@@ -85,6 +85,38 @@ public static class ResultExtensions
         where TError : notnull
     {
         return self.Match(Option<TValue>.Some, Option<TValue>.None);
+    }
+
+    /// <summary>
+    /// Returns the contained <c>Ok</c> value, consuming the <c>self</c> value if it exists,
+    /// otherwise returns the value provided by a function.
+    /// </summary>
+    /// <param name="self">The <c>Result</c> value.</param>
+    /// <param name="func">A function that provides a default value.</param>
+    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
+    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
+    /// <returns>The contained <c>Ok</c> or default value.</returns>
+    public static TValue Default<TValue, TError>(this Result<TValue, TError> self, Func<TError, TValue> func)
+        where TValue : notnull
+        where TError : notnull
+    {
+        return self.IsOk ? self.Value : func(self.Error);
+    }
+
+    /// <summary>
+    /// Returns the contained <c>Ok</c> value, consuming the <c>self</c> value if it exists,
+    /// otherwise returns the specified default value.
+    /// </summary>
+    /// <param name="self">The <c>Result</c> value.</param>
+    /// <param name="value">The specified default value.</param>
+    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
+    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
+    /// <returns>The contained <c>Ok</c> or default value.</returns>
+    public static TValue Default<TValue, TError>(this Result<TValue, TError> self, TValue value)
+        where TValue : notnull
+        where TError : notnull
+    {
+        return self.IsOk ? self.Value : value;
     }
 
     /// <summary>

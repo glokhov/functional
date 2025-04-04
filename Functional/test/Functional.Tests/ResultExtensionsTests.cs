@@ -39,6 +39,30 @@ public sealed class ResultExtensionsTests
     }
 
     [Fact]
+    public void If_Ok_Default_Value_Returns_Ok_Value()
+    {
+        Assert.Equal("Value", Result<string, string>.Ok("Value").Default("Default"));
+    }
+
+    [Fact]
+    public void If_Error_Default_Value_Returns_Default_Value()
+    {
+        Assert.Equal("Default", Result<string, string>.Err("Error").Default("Default"));
+    }
+
+    [Fact]
+    public void If_Ok_Default_With_Returns_Ok_Value()
+    {
+        Assert.Equal("Value", Result<string, string>.Ok("Value").Default(_ => "Default"));
+    }
+
+    [Fact]
+    public void If_Error_Default_With_Returns_Default_Value()
+    {
+        Assert.Equal("DefaultError", Result<string, string>.Err("Error").Default(err => "Default" + err));
+    }
+
+    [Fact]
     public void If_Ok_Map_Calls_Mapping_Func()
     {
         var mapping = new StubFunc<string, string>("Result");
