@@ -106,6 +106,24 @@ public static class ResultExtensions
     }
 
     /// <summary>
+    /// Transforms a <c>Result&lt;TValue, TError&gt;</c> into a <c>Result&lt;TValue, TOutput&gt;</c>
+    /// by applying a <c>mapping</c> function to the error value, leaving the success value untouched.
+    /// </summary>
+    /// <param name="self">The <c>Result</c> value.</param>
+    /// <param name="mapping">The function to apply to a contained value.</param>
+    /// <typeparam name="TValue">The type of the success value.</typeparam>
+    /// <typeparam name="TError">The type of the error value.</typeparam>
+    /// <typeparam name="TOutput">The type of the output value.</typeparam>
+    /// <returns>The <c>Result&lt;TValue, TOutput&gt;</c>.</returns>
+    public static Result<TValue, TOutput> MapError<TValue, TError, TOutput>(this Result<TValue, TError> self, Func<TError, TOutput> mapping)
+        where TValue : notnull
+        where TError : notnull
+        where TOutput : notnull
+    {
+        return self.IsErr ? Result<TValue, TOutput>.Err(mapping(self.Error)) : Result<TValue, TOutput>.Ok(self.Value);
+    }
+
+    /// <summary>
     /// Transforms a <c>Result&lt;TValue, TError&gt;</c> into a <c>Result&lt;TOutput, TError&gt;</c>
     /// by applying a <c>binder</c> function to the success value, leaving the error value untouched.
     /// </summary>

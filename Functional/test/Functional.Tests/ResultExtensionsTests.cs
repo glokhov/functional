@@ -39,48 +39,71 @@ public sealed class ResultExtensionsTests
     }
 
     [Fact]
-    public void If_Ok_Map_Calls_Func()
+    public void If_Ok_Map_Calls_Mapping_Func()
     {
-        var func = new StubFunc<string, string>("Result");
+        var mapping = new StubFunc<string, string>("Result");
 
-        var result = Result<string, string>.Ok("Ok").Map(func.Invoke);
+        var result = Result<string, string>.Ok("Ok").Map(mapping.Invoke);
 
-        Assert.True(func.Received);
-        Assert.Equal("Ok", func.Parameter);
+        Assert.True(mapping.Received);
+        Assert.Equal("Ok", mapping.Parameter);
         Assert.Equal(Result<string, string>.Ok("Result"), result);
     }
 
     [Fact]
-    public void If_Err_Map_Does_Not_Call_Func()
+    public void If_Err_Map_Does_Not_Call_Mapping_Func()
     {
-        var func = new StubFunc<string, string>("Result");
+        var mapping = new StubFunc<string, string>("Result");
 
-        var result = Result<string, string>.Err("Err").Map(func.Invoke);
+        var result = Result<string, string>.Err("Err").Map(mapping.Invoke);
 
-        Assert.False(func.Received);
+        Assert.False(mapping.Received);
         Assert.Equal(Result<string, string>.Err("Err"), result);
     }
 
     [Fact]
-    public void If_Ok_Bind_Calls_Func()
+    public void If_Err_MapError_Calls_Mapping_Func()
     {
-        var func = new StubFunc<string, Result<string, string>>(Result<string, string>.Ok("Result"));
+        var mapping = new StubFunc<string, string>("Result");
 
-        var result = Result<string, string>.Ok("Ok").Bind(func.Invoke);
+        var result = Result<string, string>.Err("Err").MapError(mapping.Invoke);
 
-        Assert.True(func.Received);
-        Assert.Equal("Ok", func.Parameter);
+        Assert.True(mapping.Received);
+        Assert.Equal("Err", mapping.Parameter);
+        Assert.Equal(Result<string, string>.Err("Result"), result);
+    }
+
+    [Fact]
+    public void If_Ok_MapError_Does_Not_Call_Mapping_Func()
+    {
+        var mapping = new StubFunc<string, string>("Result");
+
+        var result = Result<string, string>.Ok("Ok").MapError(mapping.Invoke);
+
+        Assert.False(mapping.Received);
+        Assert.Equal(Result<string, string>.Ok("Ok"), result);
+    }
+
+    [Fact]
+    public void If_Ok_Bind_Calls_Binder_Func()
+    {
+        var binder = new StubFunc<string, Result<string, string>>(Result<string, string>.Ok("Result"));
+
+        var result = Result<string, string>.Ok("Ok").Bind(binder.Invoke);
+
+        Assert.True(binder.Received);
+        Assert.Equal("Ok", binder.Parameter);
         Assert.Equal(Result<string, string>.Ok("Result"), result);
     }
 
     [Fact]
-    public void If_Err_Bind_Does_Not_Call_Func()
+    public void If_Err_Bind_Does_Not_Call_Binder_Func()
     {
-        var func = new StubFunc<string, Result<string, string>>(Result<string, string>.Ok("Result"));
+        var binder = new StubFunc<string, Result<string, string>>(Result<string, string>.Ok("Result"));
 
-        var result = Result<string, string>.Err("Err").Bind(func.Invoke);
+        var result = Result<string, string>.Err("Err").Bind(binder.Invoke);
 
-        Assert.False(func.Received);
+        Assert.False(binder.Received);
         Assert.Equal(Result<string, string>.Err("Err"), result);
     }
 

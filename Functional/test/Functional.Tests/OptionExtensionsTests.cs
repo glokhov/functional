@@ -51,48 +51,48 @@ public sealed class OptionExtensionsTests
     }
 
     [Fact]
-    public void If_Some_Map_Calls_Func()
+    public void If_Some_Map_Calls_Mapping_Func()
     {
-        var func = new StubFunc<string, string>("Result");
+        var mapping = new StubFunc<string, string>("Result");
 
-        var result = Option<string>.Some("Some").Map(func.Invoke);
+        var result = Option<string>.Some("Some").Map(mapping.Invoke);
 
-        Assert.True(func.Received);
-        Assert.Equal("Some", func.Parameter);
+        Assert.True(mapping.Received);
+        Assert.Equal("Some", mapping.Parameter);
         Assert.Equal(Option<string>.Some("Result"), result);
     }
 
     [Fact]
-    public void If_None_Map_Does_Not_Call_Func()
+    public void If_None_Map_Does_Not_Call_Mapping_Func()
     {
-        var func = new StubFunc<string, string>("Result");
+        var mapping = new StubFunc<string, string>("Result");
 
-        var result = Option<string>.None.Map(func.Invoke);
+        var result = Option<string>.None.Map(mapping.Invoke);
 
-        Assert.False(func.Received);
+        Assert.False(mapping.Received);
         Assert.Equal(Option<string>.None, result);
     }
 
     [Fact]
-    public void If_Some_Bind_Calls_Func()
+    public void If_Some_Bind_Calls_Binder_Func()
     {
-        var func = new StubFunc<string, Option<string>>(Option<string>.Some("Result"));
+        var binder = new StubFunc<string, Option<string>>(Option<string>.Some("Result"));
 
-        var result = Option<string>.Some("Some").Bind(func.Invoke);
+        var result = Option<string>.Some("Some").Bind(binder.Invoke);
 
-        Assert.True(func.Received);
-        Assert.Equal("Some", func.Parameter);
+        Assert.True(binder.Received);
+        Assert.Equal("Some", binder.Parameter);
         Assert.Equal(Option<string>.Some("Result"), result);
     }
 
     [Fact]
-    public void If_None_Bind_Does_Not_Call_Func()
+    public void If_None_Bind_Does_Not_Call_Binder_Func()
     {
-        var func = new StubFunc<string, Option<string>>(Option<string>.Some("Result"));
+        var binder = new StubFunc<string, Option<string>>(Option<string>.Some("Result"));
 
-        var result = Option<string>.None.Bind(func.Invoke);
+        var result = Option<string>.None.Bind(binder.Invoke);
 
-        Assert.False(func.Received);
+        Assert.False(binder.Received);
         Assert.Equal(Option<string>.None, result);
     }
 
