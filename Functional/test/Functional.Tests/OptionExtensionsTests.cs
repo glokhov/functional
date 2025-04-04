@@ -51,6 +51,30 @@ public sealed class OptionExtensionsTests
     }
 
     [Fact]
+    public void If_Some_Default_Value_Returns_Some_Value()
+    {
+        Assert.Equal("Value", Option<string>.Some("Value").Default("Default"));
+    }
+
+    [Fact]
+    public void If_None_Default_Value_Returns_Default_Value()
+    {
+        Assert.Equal("Default", Option<string>.None.Default("Default"));
+    }
+
+    [Fact]
+    public void If_Some_Default_With_Returns_Some_Value()
+    {
+        Assert.Equal("Value", Option<string>.Some("Value").Default(() => "Default"));
+    }
+
+    [Fact]
+    public void If_None_Default_With_Returns_Default_Value()
+    {
+        Assert.Equal("Default", Option<string>.None.Default(() => "Default"));
+    }
+
+    [Fact]
     public void If_Some_Map_Calls_Mapping_Func()
     {
         var mapping = new StubFunc<string, string>("Result");

@@ -64,7 +64,7 @@ public static class OptionExtensions
     /// <summary>
     /// Converts an <c>Option</c> value to a <c>Result</c> value.
     /// </summary>
-    /// <param name="self">This <c>Option</c> value.</param>
+    /// <param name="self">The <c>Option</c> value.</param>
     /// <param name="error">The function to get the error value.</param>
     /// <typeparam name="TValue">The type of the success value.</typeparam>
     /// <typeparam name="TError">The type of the error value.</typeparam>
@@ -79,7 +79,7 @@ public static class OptionExtensions
     /// <summary>
     /// Converts an <c>Option</c> value to a <c>Result</c> value.
     /// </summary>
-    /// <param name="self">This <c>Option</c> value.</param>
+    /// <param name="self">The <c>Option</c> value.</param>
     /// <param name="error">The error value.</param>
     /// <typeparam name="TValue">The type of the success value.</typeparam>
     /// <typeparam name="TError">The type of the error value.</typeparam>
@@ -89,6 +89,34 @@ public static class OptionExtensions
         where TError : notnull
     {
         return self.Match(Result<TValue, TError>.Ok, Result<TValue, TError>.Err(error));
+    }
+
+    /// <summary>
+    /// Returns the contained <c>Some</c> value, consuming the <c>self</c> value if it exists,
+    /// otherwise returns the value provided by a function.
+    /// </summary>
+    /// <param name="self">The <c>Option</c> value.</param>
+    /// <param name="func">A function that provides a default value.</param>
+    /// <typeparam name="TValue">The type of the contained <c>Some</c> value.</typeparam>
+    /// <returns>The contained <c>Some</c> or default value.</returns>
+    public static TValue Default<TValue>(this Option<TValue> self, Func<TValue> func)
+        where TValue : notnull
+    {
+        return self.IsSome ? self.Value : func();
+    }
+
+    /// <summary>
+    /// Returns the contained <c>Some</c> value, consuming the <c>self</c> value if it exists,
+    /// otherwise returns the specified default value.
+    /// </summary>
+    /// <param name="self">The <c>Option</c> value.</param>
+    /// <param name="value">The specified default value.</param>
+    /// <typeparam name="TValue">The type of the contained <c>Some</c> value.</typeparam>
+    /// <returns>The contained <c>Some</c> or default value.</returns>
+    public static TValue Default<TValue>(this Option<TValue> self, TValue value)
+        where TValue : notnull
+    {
+        return self.IsSome ? self.Value : value;
     }
 
     /// <summary>
