@@ -3,7 +3,7 @@
 namespace Functional.FSharp;
 
 /// <summary>
-/// Funcitons for the type <c>Result</c>.
+/// Functions for the type <c>Result</c>.
 /// </summary>
 public static class ResultModule
 {

@@ -20,7 +20,7 @@
         <Version>0.3.0</Version>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="../../../CSharp.md" Pack="true" Visible="true" PackagePath="/" />
+        <None Include="../../../CSHARP.md" Pack="true" Visible="true" PackagePath="/" />
     </ItemGroup>
     <ItemGroup>
         <None Include="../../../README.md" Pack="true" Visible="true" PackagePath="/" />

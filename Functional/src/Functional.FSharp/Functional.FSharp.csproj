@@ -26,6 +26,6 @@
         <ProjectReference Include="..\Functional\Functional.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="../../../FSharp.md" Pack="true" Visible="true" PackagePath="/" />
+        <None Include="../../../FSHARP.md" Pack="true" Visible="true" PackagePath="/" />
     </ItemGroup>
 </Project>
