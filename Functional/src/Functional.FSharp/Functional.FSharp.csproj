@@ -11,7 +11,7 @@
         <PackageTags>functional;monad;option;result;fsharp</PackageTags>
         <PackageProjectUrl>https://github.com/glokhov/functional</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageReadmeFile>FSharp.md</PackageReadmeFile>
+        <PackageReadmeFile>FSHARP.md</PackageReadmeFile>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/glokhov/functional.git</RepositoryUrl>
         <IncludeSymbols>true</IncludeSymbols>
@@ -20,12 +20,12 @@
         <Version>0.1.0</Version>
     </PropertyGroup>
     <ItemGroup>
+        <None Include="../../../FSHARP.md" Pack="true" Visible="true" PackagePath="/" />
+    </ItemGroup>
+    <ItemGroup>
         <PackageReference Include="FSharp.Core" Version="9.0.201" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Functional\Functional.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="../../../FSharp.md" Pack="true" Visible="true" PackagePath="/" />
     </ItemGroup>
 </Project>
