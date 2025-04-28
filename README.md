@@ -16,8 +16,8 @@ using static Functional.Prelude;
 Option<int> some = Some(42);
 Option<int> none = None;
 
-int someValue = some.Match(value => value, 0);
-int noneValue = none.Match(value => value, 0);
+int someValue = some.Match(Identity, 0);
+int noneValue = none.Match(Identity, 0);
 
 Assert.Equal(42, someValue);
 Assert.Equal(0, noneValue);
@@ -37,9 +37,9 @@ Assert.Equal(2, output[1]);
 Result<int, string> ok = Ok(42);
 Result<int, string> err = Err("There is no answer");
 
-int okValue = ok.Match(value => value, 0);
-int errValue = err.Match(value => value, 0);
-string error = err.Match(value => $"{value}", error => error);
+int okValue = ok.Match(Identity, 0);
+int errValue = err.Match(Identity, 0);
+string error = err.Match(value => value.ToString(), Identity);
 
 Assert.Equal(42, okValue);
 Assert.Equal(0, errValue);
@@ -76,8 +76,8 @@ string? nullString = null;
 Option<string> some = someString.ToOption();
 Option<string> none = nullString.ToOption();
 
-string someResult = some.Match(value => value, "none");
-string noneResult = none.Match(value => value, "none");
+string someResult = some.Match(Identity, "none");
+string noneResult = none.Match(Identity, "none");
 
 Assert.Equal("Forty two", someResult);
 Assert.Equal("none", noneResult);
@@ -90,8 +90,8 @@ int? nullInt = null;
 Option<int> some = someInt.ToOption();
 Option<int> none = nullInt.ToOption();
 
-int someValue = some.Match(value => value, 0);
-int noneValue = none.Match(value => value, 0);
+int someValue = some.Match(Identity, 0);
+int noneValue = none.Match(Identity, 0);
 
 Assert.Equal(42, someValue);
 Assert.Equal(0, noneValue);
