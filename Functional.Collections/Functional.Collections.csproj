@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Authors>Gennadiy Lokhov</Authors>
+        <Copyright>Copyright © Gennadiy Lokhov</Copyright>
+        <Description>Collection extension methods</Description>
+        <PackageId>Functional.Monad.Collections</PackageId>
+        <PackageTags>functional;monad;option;result;choose;</PackageTags>
+        <PackageProjectUrl>https://github.com/glokhov/functional</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>COLLECTIONS.md</PackageReadmeFile>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/glokhov/functional.git</RepositoryUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <Version>0.1.0</Version>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Functional\src\Functional\Functional.csproj" />
+    </ItemGroup>
+</Project>

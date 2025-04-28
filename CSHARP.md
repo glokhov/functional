@@ -11,7 +11,7 @@ Or the ```using``` directive in a single file:
 using Functional;
 using static Functional.Prelude;
 ```
-```Option``` monads support either some value, or no value:
+```Option``` monads support either some value, or no value; use ```Match``` function to get value safely:
 ```csharp
 Option<int> some = Some(42);
 Option<int> none = None;
@@ -22,7 +22,17 @@ int noneValue = none.Match(value => value, 0);
 Assert.Equal(42, someValue);
 Assert.Equal(0, noneValue);
 ```
-```Result``` monads support either an ok value, or an error value:
+Use ```Choose``` function to convert a collection of ```Option``` values to a collection of values:
+```csharp
+List<Option<int>> input = [Some(1), None, Some(2)];
+
+List<int> output = input.Choose(element => element.Identity());
+
+Assert.Equal(2, output.Count);
+Assert.Equal(1, output[0]);
+Assert.Equal(2, output[1]);
+```
+```Result``` monads support either an ok value, or an error value; use ```Match``` function to get value safely:
 ```csharp
 Result<int, string> ok = Ok(42);
 Result<int, string> err = Err("There is no answer");
@@ -35,7 +45,7 @@ Assert.Equal(42, okValue);
 Assert.Equal(0, errValue);
 Assert.Equal("There is no answer", error);
 ```
-An ```Option``` cna be converted to a ```Result```
+An ```Option``` can be converted to a ```Result```
 ```csharp
 Option<int> some = Some(42);
 Option<int> none = None;
