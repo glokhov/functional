@@ -31,7 +31,7 @@ public sealed class PreludeTests
     {
         const int some = 42;
 
-        var result = some.Identity();
+        var result = Identity(some);
 
         Assert.Equal(some, result);
     }
@@ -41,7 +41,7 @@ public sealed class PreludeTests
     {
         const string some = "42";
 
-        var result = some.Identity();
+        var result = Identity(some);
 
         Assert.Same(some, result);
     }

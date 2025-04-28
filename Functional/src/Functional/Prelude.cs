@@ -11,7 +11,7 @@ public static class Prelude
     /// <param name="self">The input value.</param>
     /// <typeparam name="TValue">The type of the value.</typeparam>
     /// <returns>The same value.</returns>
-    public static TValue Identity<TValue>(this TValue self)
+    public static TValue Identity<TValue>(TValue self)
     {
         return self;
     }

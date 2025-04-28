@@ -25,7 +25,7 @@ public sealed class ReadmeTests
     {
         List<Option<int>> input = [Some(1), None, Some(2)];
 
-        List<int> output = input.Choose(Prelude.Identity);
+        List<int> output = input.Choose(Identity);
 
         Assert.Equal(2, output.Count);
     }
