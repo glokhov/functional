@@ -207,4 +207,26 @@ public sealed class ResultExtensionsTests
         Assert.True(err.Received);
         Assert.Equal("Err", err.Parameter);
     }
+
+    [Fact]
+    public void If_Ok_Identity_Returns_Ok()
+    {
+        var ok = Result<string, string>.Ok("Ok");
+
+        var result = ok.Identity();
+
+        Assert.True(result.IsOk);
+        Assert.Equal("Ok", result.Unwrap());
+    }
+
+    [Fact]
+    public void If_Err_Identity_Returns_Err()
+    {
+        var err = Result<string, string>.Err("Error");
+
+        var result = err.Identity();
+
+        Assert.True(result.IsErr);
+        Assert.Equal("Error", result.ExpectError());
+    }
 }

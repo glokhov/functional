@@ -194,4 +194,25 @@ public sealed class OptionExtensionsTests
         Assert.False(some.Received);
         Assert.True(none.Received);
     }
+
+    [Fact]
+    public void If_Some_Identity_Returns_Some()
+    {
+        var some = Option<string>.Some("Some");
+
+        var result = some.Identity();
+
+        Assert.True(result.IsSome);
+        Assert.Equal("Some", result.Unwrap());
+    }
+
+    [Fact]
+    public void If_None_Identity_Returns_None()
+    {
+        var none = Option<string>.None;
+
+        var result = none.Identity();
+
+        Assert.True(result.IsNone);
+    }
 }

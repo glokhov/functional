@@ -208,4 +208,15 @@ public static class OptionExtensions
             none();
         }
     }
+
+    /// <summary>
+    /// The Identity function.
+    /// </summary>
+    /// <param name="self">The input value.</param>
+    /// <typeparam name="TValue">The type of the value.</typeparam>
+    /// <returns>The same value.</returns>
+    public static Option<TValue> Identity<TValue>(this Option<TValue> self) where TValue : notnull
+    {
+        return self;
+    }
 }
