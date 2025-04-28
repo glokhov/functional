@@ -26,7 +26,7 @@ Use ```Choose``` function to convert a collection of ```Option``` values to a co
 ```csharp
 List<Option<int>> input = [Some(1), None, Some(2)];
 
-List<int> output = input.Choose(element => element.Identity());
+List<int> output = input.Choose(Prelude.Identity);
 
 Assert.Equal(2, output.Count);
 Assert.Equal(1, output[0]);

@@ -7,7 +7,7 @@ public sealed class CollectionExtensionsTests
     {
         IEnumerable<Option<int>> input = [Some(1), None, Some(2)];
 
-        IEnumerable<int> output = input.Choose(element => element.Identity());
+        var output = input.Choose(Prelude.Identity);
 
         Assert.Equal(2, output.Count());
     }
@@ -17,7 +17,7 @@ public sealed class CollectionExtensionsTests
     {
         List<Option<int>> input = [Some(1), None, Some(2)];
 
-        List<int> output = input.Choose(element => element.Identity());
+        var output = input.Choose(Prelude.Identity);
 
         Assert.Equal(2, output.Count);
         Assert.Equal(1, output[0]);
@@ -29,7 +29,7 @@ public sealed class CollectionExtensionsTests
     {
         Option<int>[] input = [Some(1), None, Some(2)];
 
-        int[] output = input.Choose(element => element.Identity());
+        var output = input.Choose(Prelude.Identity);
 
         Assert.Equal(2, output.Length);
         Assert.Equal(1, output[0]);
@@ -42,7 +42,7 @@ public sealed class CollectionExtensionsTests
     {
         IEnumerable<Option<int>> input = [];
 
-        var output = input.Choose(element => element.Identity());
+        var output = input.Choose(Prelude.Identity);
 
         Assert.Empty(output);
     }
@@ -52,7 +52,7 @@ public sealed class CollectionExtensionsTests
     {
         List<Option<int>> input = [];
 
-        var output = input.Choose(element => element.Identity());
+        var output = input.Choose(Prelude.Identity);
 
         Assert.Empty(output);
     }
@@ -62,7 +62,7 @@ public sealed class CollectionExtensionsTests
     {
         Option<int>[] input = [];
 
-        var output = input.Choose(element => element.Identity());
+        var output = input.Choose(Prelude.Identity);
 
         Assert.Empty(output);
     }

@@ -6,6 +6,17 @@ namespace Functional;
 public static class Prelude
 {
     /// <summary>
+    /// The Identity function.
+    /// </summary>
+    /// <param name="self">The input value.</param>
+    /// <typeparam name="TValue">The type of the value.</typeparam>
+    /// <returns>The same value.</returns>
+    public static TValue Identity<TValue>(this TValue self)
+    {
+        return self;
+    }
+
+    /// <summary>
     /// Creates a <c>Some</c> value.
     /// </summary>
     /// <param name="value">The input value.</param>

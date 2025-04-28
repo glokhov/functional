@@ -25,4 +25,24 @@ public sealed class PreludeTests
     {
         Assert.Equal(new Fail<string>("Error"), Err("Error"));
     }
+
+    [Fact]
+    public void If_Value_Identity_Returns_Same_Value()
+    {
+        const int some = 42;
+
+        var result = some.Identity();
+
+        Assert.Equal(some, result);
+    }
+
+    [Fact]
+    public void If_Object_Identity_Returns_Same_Object()
+    {
+        const string some = "42";
+
+        var result = some.Identity();
+
+        Assert.Same(some, result);
+    }
 }

@@ -8,7 +8,7 @@ namespace Functional.Tests;
 public sealed class ReadmeTests
 {
     [Fact]
-    public void Option()
+    public void Option_Match()
     {
         Option<int> some = Some(42);
         Option<int> none = None;
@@ -21,7 +21,17 @@ public sealed class ReadmeTests
     }
 
     [Fact]
-    public void Result()
+    public void List_Option_Choose()
+    {
+        List<Option<int>> input = [Some(1), None, Some(2)];
+
+        List<int> output = input.Choose(Prelude.Identity);
+
+        Assert.Equal(2, output.Count);
+    }
+
+    [Fact]
+    public void Result_Match()
     {
         Result<int, string> ok = Ok(42);
         Result<int, string> err = Err("There is no answer");

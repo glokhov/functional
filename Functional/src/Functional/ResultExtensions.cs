@@ -234,18 +234,4 @@ public static class ResultExtensions
             error(self.Error);
         }
     }
-
-    /// <summary>
-    /// The Identity function.
-    /// </summary>
-    /// <param name="self">The input value.</param>
-    /// <typeparam name="TValue">The type of the value.</typeparam>
-    /// <typeparam name="TError">The type of the error value.</typeparam>
-    /// <returns>The same value.</returns>
-    public static Result<TValue, TError> Identity<TValue, TError>(this Result<TValue, TError> self)
-        where TValue : notnull
-        where TError : notnull
-    {
-        return self;
-    }
 }
