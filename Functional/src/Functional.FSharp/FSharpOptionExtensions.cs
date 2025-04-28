@@ -16,6 +16,6 @@ public static class FSharpOptionExtensions
     public static Option<TValue> ToOption<TValue>(this FSharpOption<TValue>? self)
         where TValue : notnull
     {
-        return self != null ? Prelude.Some(self.Value) : Prelude.None;
+        return self != null ? Option<TValue>.Some(self.Value) : Option<TValue>.None;
     }
 }

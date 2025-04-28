@@ -18,6 +18,6 @@ public static class FSharpResultExtensions
         where TValue : notnull
         where TError : notnull
     {
-        return self.IsOk ? Prelude.Ok(self.ResultValue) : Prelude.Err(self.ErrorValue);
+        return self.IsOk ? Result<TValue, TError>.Ok(self.ResultValue) : Result<TValue, TError>.Err(self.ErrorValue);
     }
 }

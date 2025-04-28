@@ -8,12 +8,12 @@ public static class Prelude
     /// <summary>
     /// The Identity function.
     /// </summary>
-    /// <param name="self">The input value.</param>
+    /// <param name="value">The input value.</param>
     /// <typeparam name="TValue">The type of the value.</typeparam>
     /// <returns>The same value.</returns>
-    public static TValue Identity<TValue>(TValue self)
+    public static TValue Identity<TValue>(TValue value)
     {
-        return self;
+        return value;
     }
 
     /// <summary>
