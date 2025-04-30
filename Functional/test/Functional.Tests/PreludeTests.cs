@@ -45,4 +45,10 @@ public sealed class PreludeTests
 
         Assert.Same(some, result);
     }
+
+    [Fact]
+    public void Ignore_Returns_Unit()
+    {
+        Assert.Equal(Unit.Default, "Some".Ignore());
+    }
 }

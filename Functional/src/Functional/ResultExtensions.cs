@@ -1,3 +1,5 @@
+using static Functional.Prelude;
+
 namespace Functional;
 
 /// <summary>
@@ -100,7 +102,7 @@ public static class ResultExtensions
         where TValue : notnull
         where TError : notnull
     {
-        return self.IsOk ? self.Value : func(self.Error);
+        return self.Match(Identity, func);
     }
 
     /// <summary>
@@ -116,7 +118,7 @@ public static class ResultExtensions
         where TValue : notnull
         where TError : notnull
     {
-        return self.IsOk ? self.Value : value;
+        return self.Match(Identity, value);
     }
 
     /// <summary>

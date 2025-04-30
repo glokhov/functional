@@ -1,3 +1,5 @@
+using static Functional.Prelude;
+
 namespace Functional;
 
 /// <summary>
@@ -102,7 +104,7 @@ public static class OptionExtensions
     public static TValue Default<TValue>(this Option<TValue> self, Func<TValue> func)
         where TValue : notnull
     {
-        return self.IsSome ? self.Value : func();
+        return self.Match(Identity, func);
     }
 
     /// <summary>
@@ -116,7 +118,7 @@ public static class OptionExtensions
     public static TValue Default<TValue>(this Option<TValue> self, TValue value)
         where TValue : notnull
     {
-        return self.IsSome ? self.Value : value;
+        return self.Match(Identity, value);
     }
 
     /// <summary>
