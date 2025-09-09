@@ -1,6 +1,6 @@
 namespace Functional.Tests;
 
-public sealed class NullableTests
+public sealed class NullableExtensionsTests
 {
     [Fact]
     public void AsOption_Object_Returns_Some()

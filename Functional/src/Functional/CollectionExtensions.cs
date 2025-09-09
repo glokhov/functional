@@ -1,7 +1,7 @@
 ﻿namespace Functional;
 
 /// <summary>
-/// Extensions for collection types.
+/// Extension methods for collection types.
 /// </summary>
 public static class CollectionExtensions
 {

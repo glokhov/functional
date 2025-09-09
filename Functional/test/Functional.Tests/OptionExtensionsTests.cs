@@ -51,6 +51,24 @@ public sealed class OptionExtensionsTests
     }
 
     [Fact]
+    public void If_Some_Ok_Transpose_Returns_Ok_Some()
+    {
+        Assert.Equal(Result<Option<string>, string>.Ok(Option<string>.Some("Value")), Option<Result<string, string>>.Some(Result<string, string>.Ok("Value")).Transpose());
+    }
+
+    [Fact]
+    public void If_Some_Err_Transpose_Returns_Err()
+    {
+        Assert.Equal(Result<Option<string>, string>.Err("Error"), Option<Result<string, string>>.Some(Result<string, string>.Err("Error")).Transpose());
+    }
+
+    [Fact]
+    public void If_None_Transpose_Returns_Ok_None()
+    {
+        Assert.Equal(Result<Option<string>, string>.Ok(Option<string>.None), Option<Result<string, string>>.None.Transpose());
+    }
+
+    [Fact]
     public void If_Some_Default_Value_Returns_Some_Value()
     {
         Assert.Equal("Value", Option<string>.Some("Value").Default("Default"));

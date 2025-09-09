@@ -3,7 +3,7 @@ using static Functional.Prelude;
 namespace Functional;
 
 /// <summary>
-/// Extensions for the type <c>Result</c>.
+/// Extension methods for the <c>Result</c> type.
 /// </summary>
 public static class ResultExtensions
 {
@@ -87,6 +87,40 @@ public static class ResultExtensions
         where TError : notnull
     {
         return self.Match(Option<TValue>.Some, Option<TValue>.None);
+    }
+
+    /// <summary>
+    /// Transposes a <c>Result</c> of an <c>Option</c> into an <c>Option</c> of a <c>Result</c>.
+    /// </summary>
+    /// <param name="self">The <c>Result</c> of an <c>Option</c>.</param>
+    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
+    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
+    /// <returns>The <c>Option</c> of a <c>Result</c>.</returns>
+    public static Option<Result<TValue, TError>> Transpose<TValue, TError>(this Result<Option<TValue>, TError> self)
+        where TValue : notnull
+        where TError : notnull
+    {
+        return self.Match(HandleOk, HandleError);
+
+        Option<Result<TValue, TError>> HandleOk(Option<TValue> option)
+        {
+            return option.Match(HandleSome, HandleNone);
+
+            Option<Result<TValue, TError>> HandleSome(TValue value)
+            {
+                return Option<Result<TValue, TError>>.Some(Result<TValue, TError>.Ok(value));
+            }
+
+            Option<Result<TValue, TError>> HandleNone()
+            {
+                return Option<Result<TValue, TError>>.None;
+            }
+        }
+
+        Option<Result<TValue, TError>> HandleError(TError error)
+        {
+            return Option<Result<TValue, TError>>.Some(Result<TValue, TError>.Err(error));
+        }
     }
 
     /// <summary>

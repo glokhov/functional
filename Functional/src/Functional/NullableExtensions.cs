@@ -3,7 +3,7 @@ namespace Functional;
 /// <summary>
 /// Extension methods for nullable types.
 /// </summary>
-public static class Nullable
+public static class NullableExtensions
 {
     /// <summary>
     /// Converts a potentially <c>null</c> value to an <c>Option</c> value.
