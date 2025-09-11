@@ -3,7 +3,7 @@ namespace Functional.Tests;
 public sealed class NullableExtensionsTests
 {
     [Fact]
-    public void AsOption_Object_Returns_Some()
+    public void ToOption_Object_Returns_Some()
     {
         object obj = new { };
 
@@ -13,7 +13,7 @@ public sealed class NullableExtensionsTests
     }
 
     [Fact]
-    public void AsOption_Object_Null_Returns_None()
+    public void ToOption_Object_Null_Returns_None()
     {
         object obj = null!;
 
@@ -23,7 +23,7 @@ public sealed class NullableExtensionsTests
     }
 
     [Fact]
-    public void AsOption_Nullable_Returns_Some()
+    public void ToOption_Nullable_Returns_Some()
     {
         int? nul = 42;
 
@@ -33,13 +33,93 @@ public sealed class NullableExtensionsTests
     }
 
     [Fact]
-    public void AsOption_Nullable_Null_Returns_None()
+    public void ToOption_Nullable_Null_Returns_None()
     {
         int? nul = null;
 
         var option = nul.ToOption();
 
         Assert.True(option.IsNone);
+    }
+
+    [Fact]
+    public void ToResult_Object_Returns_Ok()
+    {
+        object obj = new { };
+
+        var result = obj.ToResult("Error");
+
+        Assert.Same(obj, result.Unwrap());
+    }
+
+    [Fact]
+    public void ToResult_Object_Null_Returns_Err()
+    {
+        object obj = null!;
+
+        var result = obj.ToResult("Error");
+
+        Assert.Equal("Error", result.ExpectError());
+    }
+
+    [Fact]
+    public void ToResult_Nullable_Returns_Ok()
+    {
+        int? nul = 42;
+
+        var result = nul.ToResult("Error");
+
+        Assert.Equal(nul.Value, result.Unwrap());
+    }
+
+    [Fact]
+    public void ToResult_Nullable_Null_Returns_Err()
+    {
+        int? nul = null;
+
+        var result = nul.ToResult("Error");
+
+        Assert.Equal("Error", result.ExpectError());
+    }
+
+    [Fact]
+    public void ToResult_Object_Returns_Ok_Func()
+    {
+        object obj = new { };
+
+        var result = obj.ToResult(() => "Error");
+
+        Assert.Same(obj, result.Unwrap());
+    }
+
+    [Fact]
+    public void ToResult_Object_Null_Returns_Err_Func()
+    {
+        object obj = null!;
+
+        var result = obj.ToResult(() => "Error");
+
+        Assert.Equal("Error", result.ExpectError());
+    }
+
+    [Fact]
+    public void ToResult_Nullable_Returns_Ok_Func()
+    {
+        int? nul = 42;
+
+        var result = nul.ToResult(() => "Error");
+
+        Assert.Equal(nul.Value, result.Unwrap());
+    }
+
+    [Fact]
+    public void ToResult_Nullable_Null_Returns_Err_Func()
+    {
+        int? nul = null;
+
+        var result = nul.ToResult(() => "Error");
+
+        Assert.Equal("Error", result.ExpectError());
     }
 
     [Fact]

@@ -6,7 +6,7 @@ namespace Functional;
 public static class NullableExtensions
 {
     /// <summary>
-    /// Converts a potentially <c>null</c> value to an <c>Option</c> value.
+    /// Converts a potentially <c>null</c> value to an <c>Option</c>.
     /// </summary>
     /// <param name="value">The input value.</param>
     /// <typeparam name="TValue">The type of the value.</typeparam>
@@ -17,7 +17,7 @@ public static class NullableExtensions
     }
 
     /// <summary>
-    /// Converts a <c>Nullable</c> value to an <c>Option</c> value.
+    /// Converts a <c>Nullable</c> value to an <c>Option</c>.
     /// </summary>
     /// <param name="value">The input value.</param>
     /// <typeparam name="TValue">The type of the value.</typeparam>
@@ -28,7 +28,67 @@ public static class NullableExtensions
     }
 
     /// <summary>
-    /// Converts an <c>Option</c> value to a potentially <c>null</c> value.
+    /// Converts a potentially <c>null</c> value to a <c>Result</c>.
+    /// </summary>
+    /// <param name="value">The input value.</param>
+    /// <param name="error">The error value.</param>
+    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
+    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
+    /// <returns>The result <c>Result</c> value.</returns>
+    public static Result<TValue, TError> ToResult<TValue, TError>(this TValue? value, TError error)
+        where TValue : class
+        where TError : notnull
+    {
+        return value is not null ? Result<TValue, TError>.Ok(value) : Result<TValue, TError>.Err(error);
+    }
+
+    /// <summary>
+    /// Converts a <c>Nullable</c> value to a <c>Result</c>.
+    /// </summary>
+    /// <param name="value">The input value.</param>
+    /// <param name="error">The error value.</param>
+    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
+    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
+    /// <returns>The result <c>Result</c> value.</returns>
+    public static Result<TValue, TError> ToResult<TValue, TError>(this TValue? value, TError error)
+        where TValue : struct
+        where TError : notnull
+    {
+        return value.HasValue ? Result<TValue, TError>.Ok(value.Value) : Result<TValue, TError>.Err(error);
+    }
+
+    /// <summary>
+    /// Converts a potentially <c>null</c> value to a <c>Result</c>.
+    /// </summary>
+    /// <param name="value">The input value.</param>
+    /// <param name="error">The error value.</param>
+    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
+    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
+    /// <returns>The result <c>Result</c> value.</returns>
+    public static Result<TValue, TError> ToResult<TValue, TError>(this TValue? value, Func<TError> error)
+        where TValue : class
+        where TError : notnull
+    {
+        return value is not null ? Result<TValue, TError>.Ok(value) : Result<TValue, TError>.Err(error());
+    }
+
+    /// <summary>
+    /// Converts a <c>Nullable</c> value to a <c>Result</c>.
+    /// </summary>
+    /// <param name="value">The input value.</param>
+    /// <param name="error">The error value.</param>
+    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
+    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
+    /// <returns>The result <c>Result</c> value.</returns>
+    public static Result<TValue, TError> ToResult<TValue, TError>(this TValue? value, Func<TError> error)
+        where TValue : struct
+        where TError : notnull
+    {
+        return value.HasValue ? Result<TValue, TError>.Ok(value.Value) : Result<TValue, TError>.Err(error());
+    }
+
+    /// <summary>
+    /// Converts an <c>Option</c> to a potentially <c>null</c> value.
     /// </summary>
     /// <param name="value">The input value.</param>
     /// <typeparam name="TValue">The type of the value.</typeparam>
@@ -39,7 +99,7 @@ public static class NullableExtensions
     }
 
     /// <summary>
-    /// Convert an <c>Option</c> value to a <c>Nullable</c> value.
+    /// Convert an <c>Option</c> to a <c>Nullable</c> value.
     /// </summary>
     /// <param name="value">The input value.</param>
     /// <typeparam name="TValue">The type of the value.</typeparam>
@@ -50,7 +110,7 @@ public static class NullableExtensions
     }
 
     /// <summary>
-    /// Converts a <c>Result</c> value to a potentially <c>null</c> value.
+    /// Converts a <c>Result</c> to a potentially <c>null</c> value.
     /// </summary>
     /// <param name="value">The input value.</param>
     /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
@@ -64,7 +124,7 @@ public static class NullableExtensions
     }
 
     /// <summary>
-    /// Convert a <c>Result</c> value to a <c>Nullable</c> value.
+    /// Convert a <c>Result</c> to a <c>Nullable</c> value.
     /// </summary>
     /// <param name="value">The input value.</param>
     /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
