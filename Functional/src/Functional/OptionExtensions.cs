@@ -8,13 +8,13 @@ namespace Functional;
 public static class OptionExtensions
 {
     /// <summary>
-    /// Returns the contained <c>Some</c> value, consuming the <c>self</c> value.
+    /// Returns the contained value, consuming the <c>self</c> value.
     /// Because this function may throw an Exception, its use is generally discouraged.
     /// Instead, prefer to use the <c>Match</c> function.
     /// </summary>
-    /// <param name="self">The <c>Option</c> value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Some</c> value.</typeparam>
-    /// <returns>The contained <c>Some</c> value.</returns>
+    /// <param name="self">The <c>Option</c>.</param>
+    /// <typeparam name="TValue">The type of the contained value.</typeparam>
+    /// <returns>The contained value.</returns>
     /// <exception cref="System.InvalidCastException">self value is <c>None</c>.</exception>
     public static TValue Unwrap<TValue>(this Option<TValue> self) where TValue : notnull
     {
@@ -22,13 +22,13 @@ public static class OptionExtensions
     }
 
     /// <summary>
-    /// Returns the <c>Unit</c> value, consuming the <c>self</c> value.
+    /// Returns the <c>Unit</c>, consuming the <c>self</c> value.
     /// Because this function may throw an Exception, its use is generally discouraged.
     /// Instead, prefer to use the <c>Match</c> function.
     /// </summary>
-    /// <param name="self">The <c>Option</c> value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Some</c> value.</typeparam>
-    /// <returns>The <c>Unit</c> value.</returns>
+    /// <param name="self">The <c>Option</c>.</param>
+    /// <typeparam name="TValue">The type of the contained value.</typeparam>
+    /// <returns>The <c>Unit</c>.</returns>
     /// <exception cref="System.InvalidCastException">self value is <c>Some</c>.</exception>
     public static Unit ExpectUnit<TValue>(this Option<TValue> self) where TValue : notnull
     {
@@ -36,13 +36,13 @@ public static class OptionExtensions
     }
 
     /// <summary>
-    /// Returns the <c>self</c> value as the <c>Pure</c> value.
+    /// Returns the <c>self</c> value as the <c>Pure</c>.
     /// Because this function may throw an Exception, its use is generally discouraged.
     /// Instead, prefer to use the <c>Match</c> function.
     /// </summary>
-    /// <param name="self">The <c>Option</c> value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Some</c> value.</typeparam>
-    /// <returns>This <c>Option</c> value as a <c>Pure</c> value.</returns>
+    /// <param name="self">The <c>Option</c>.</param>
+    /// <typeparam name="TValue">The type of the contained value.</typeparam>
+    /// <returns>This <c>Option</c> as a <c>Pure</c>.</returns>
     /// <exception cref="System.InvalidCastException">self value is <c>None</c>.</exception>
     public static Pure<TValue> AsPure<TValue>(this Option<TValue> self) where TValue : notnull
     {
@@ -50,13 +50,13 @@ public static class OptionExtensions
     }
 
     /// <summary>
-    /// Returns the <c>self</c> value as the <c>Fail</c> value.
+    /// Returns the <c>self</c> value as the <c>Fail</c>.
     /// Because this function may throw an Exception, its use is generally discouraged.
     /// Instead, prefer to use the <c>Match</c> function.
     /// </summary>
-    /// <param name="self">The <c>Option</c> value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Some</c> value.</typeparam>
-    /// <returns>This <c>Option</c> value as a <c>Fail</c> value.</returns>
+    /// <param name="self">The <c>Option</c>.</param>
+    /// <typeparam name="TValue">The type of the contained value.</typeparam>
+    /// <returns>This <c>Option</c> as a <c>Fail</c>.</returns>
     /// <exception cref="System.InvalidCastException">self value is <c>Some</c>.</exception>
     public static Fail<Unit> AsFail<TValue>(this Option<TValue> self) where TValue : notnull
     {
@@ -64,13 +64,13 @@ public static class OptionExtensions
     }
 
     /// <summary>
-    /// Converts an <c>Option</c> value to a <c>Result</c> value.
+    /// Converts an <c>Option</c> to a <c>Result</c>.
     /// </summary>
-    /// <param name="self">The <c>Option</c> value.</param>
+    /// <param name="self">The <c>Option</c>.</param>
     /// <param name="error">The function to get the error value.</param>
     /// <typeparam name="TValue">The type of the success value.</typeparam>
     /// <typeparam name="TError">The type of the error value.</typeparam>
-    /// <returns>This <c>Option</c> value as a <c>Result</c> value.</returns>
+    /// <returns>This <c>Option</c> as a <c>Result</c>.</returns>
     public static Result<TValue, TError> ToResult<TValue, TError>(this Option<TValue> self, Func<TError> error)
         where TValue : notnull
         where TError : notnull
@@ -79,13 +79,13 @@ public static class OptionExtensions
     }
 
     /// <summary>
-    /// Converts an <c>Option</c> value to a <c>Result</c> value.
+    /// Converts an <c>Option</c> to a <c>Result</c>.
     /// </summary>
-    /// <param name="self">The <c>Option</c> value.</param>
+    /// <param name="self">The <c>Option</c>.</param>
     /// <param name="error">The error value.</param>
     /// <typeparam name="TValue">The type of the success value.</typeparam>
     /// <typeparam name="TError">The type of the error value.</typeparam>
-    /// <returns>This <c>Option</c> value as a <c>Result</c> value.</returns>
+    /// <returns>This <c>Option</c> as a <c>Result</c>.</returns>
     public static Result<TValue, TError> ToResult<TValue, TError>(this Option<TValue> self, TError error)
         where TValue : notnull
         where TError : notnull
@@ -123,13 +123,13 @@ public static class OptionExtensions
     }
 
     /// <summary>
-    /// Returns the contained <c>Some</c> value, consuming the <c>self</c> value if it exists,
+    /// Returns the contained  value, consuming the <c>self</c> value if it exists,
     /// otherwise returns the value provided by a function.
     /// </summary>
-    /// <param name="self">The <c>Option</c> value.</param>
-    /// <param name="func">A function that provides a default value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Some</c> value.</typeparam>
-    /// <returns>The contained <c>Some</c> or default value.</returns>
+    /// <param name="self">The <c>Option</c>.</param>
+    /// <param name="func">The function that provides the default value.</param>
+    /// <typeparam name="TValue">The type of the contained value.</typeparam>
+    /// <returns>The contained or default value.</returns>
     public static TValue Default<TValue>(this Option<TValue> self, Func<TValue> func)
         where TValue : notnull
     {
@@ -137,13 +137,13 @@ public static class OptionExtensions
     }
 
     /// <summary>
-    /// Returns the contained <c>Some</c> value, consuming the <c>self</c> value if it exists,
+    /// Returns the contained value, consuming the <c>self</c> value if it exists,
     /// otherwise returns the specified default value.
     /// </summary>
-    /// <param name="self">The <c>Option</c> value.</param>
+    /// <param name="self">The <c>Option</c>.</param>
     /// <param name="value">The specified default value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Some</c> value.</typeparam>
-    /// <returns>The contained <c>Some</c> or default value.</returns>
+    /// <typeparam name="TValue">The type of the contained value.</typeparam>
+    /// <returns>The contained or default value.</returns>
     public static TValue Default<TValue>(this Option<TValue> self, TValue value)
         where TValue : notnull
     {
@@ -155,7 +155,7 @@ public static class OptionExtensions
     /// by applying a <c>mapping</c> function to the contained value,
     /// or into <c>None</c>, if there is no contained value.
     /// </summary>
-    /// <param name="self">The <c>Option</c> value.</param>
+    /// <param name="self">The <c>Option</c>.</param>
     /// <param name="mapping">The function to apply to the contained value.</param>
     /// <typeparam name="TValue">The type of the value.</typeparam>
     /// <typeparam name="TOutput">The type of the output value.</typeparam>
@@ -172,7 +172,7 @@ public static class OptionExtensions
     /// by applying a <c>binder</c> function to the contained value,
     /// or into <c>None</c>, if there is no contained value.
     /// </summary>
-    /// <param name="self">The <c>Option</c> value.</param>
+    /// <param name="self">The <c>Option</c>.</param>
     /// <param name="binder">The function to apply to the contained value.</param>
     /// <typeparam name="TValue">The type of the value.</typeparam>
     /// <typeparam name="TOutput">The type of the output value.</typeparam>
@@ -189,7 +189,7 @@ public static class OptionExtensions
     /// and applies a <c>some</c> function to the contained value, if the state is <c>Some</c>,
     /// or calls a <c>none</c> function, if the state is <c>None</c>.
     /// </summary>
-    /// <param name="self">The <c>Option</c> value.</param>
+    /// <param name="self">The <c>Option</c>.</param>
     /// <param name="some">The function to apply to the contained value.</param>
     /// <param name="none">The function to call.</param>
     /// <typeparam name="TValue">The type of the value.</typeparam>
@@ -206,7 +206,7 @@ public static class OptionExtensions
     /// and applies a <c>some</c> function to the contained value, if the state is <c>Some</c>,
     /// or returns a <c>none</c> value, if the state is <c>None</c>.
     /// </summary>
-    /// <param name="self">The <c>Option</c> value.</param>
+    /// <param name="self">The <c>Option</c>.</param>
     /// <param name="some">The function to apply to the contained value.</param>
     /// <param name="none">The output value.</param>
     /// <typeparam name="TValue">The type of the value.</typeparam>
@@ -223,7 +223,7 @@ public static class OptionExtensions
     /// and applies a <c>some</c> action to the contained value, if the state is <c>Some</c>,
     /// or calls a <c>none</c> action, if the state is <c>None</c>.
     /// </summary>
-    /// <param name="self">The <c>Option</c> value.</param>
+    /// <param name="self">The <c>Option</c>.</param>
     /// <param name="some">The action to apply to the contained value.</param>
     /// <param name="none">The action to call.</param>
     /// <typeparam name="TValue">The type of the value.</typeparam>

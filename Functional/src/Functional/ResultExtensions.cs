@@ -8,14 +8,14 @@ namespace Functional;
 public static class ResultExtensions
 {
     /// <summary>
-    /// Returns the contained <c>Ok</c> value, consuming the <c>self</c> value.
+    /// Returns the contained success value, consuming the <c>self</c> value.
     /// Because this function may throw an Exception, its use is generally discouraged.
     /// Instead, prefer to use the <c>Match</c> function.
     /// </summary>
-    /// <param name="self">The <c>Result</c> value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
-    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
-    /// <returns>The contained <c>Ok</c> value.</returns>
+    /// <param name="self">The <c>Result</c>.</param>
+    /// <typeparam name="TValue">The type of the success value.</typeparam>
+    /// <typeparam name="TError">The type of the error value.</typeparam>
+    /// <returns>The contained success value.</returns>
     /// <exception cref="System.InvalidCastException">self value is <c>Err</c>.</exception>
     public static TValue Unwrap<TValue, TError>(this Result<TValue, TError> self)
         where TValue : notnull
@@ -25,14 +25,14 @@ public static class ResultExtensions
     }
 
     /// <summary>
-    /// Returns the contained <c>Err</c> value, consuming the <c>self</c> value.
+    /// Returns the contained error value, consuming the <c>self</c> value.
     /// Because this function may throw an Exception, its use is generally discouraged.
     /// Instead, prefer to use the <c>Match</c> function.
     /// </summary>
-    /// <param name="self">The <c>Result</c> value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
-    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
-    /// <returns>The contained <c>Err</c> value.</returns>
+    /// <param name="self">The <c>Result</c>.</param>
+    /// <typeparam name="TValue">The type of the success value.</typeparam>
+    /// <typeparam name="TError">The type of the error value.</typeparam>
+    /// <returns>The contained error value.</returns>
     /// <exception cref="System.InvalidCastException">self value is <c>Ok</c>.</exception>
     public static TError ExpectError<TValue, TError>(this Result<TValue, TError> self)
         where TValue : notnull
@@ -42,14 +42,14 @@ public static class ResultExtensions
     }
 
     /// <summary>
-    /// Returns the <c>self</c> value as the <c>Pure</c> value.
+    /// Returns the <c>self</c> value as the <c>Pure</c>.
     /// Because this function may throw an Exception, its use is generally discouraged.
     /// Instead, prefer to use the <c>Match</c> function.
     /// </summary>
-    /// <param name="self">The <c>Result</c> value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
-    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
-    /// <returns>This <c>Result</c> value as a <c>Pure</c> value.</returns>
+    /// <param name="self">The <c>Result</c>.</param>
+    /// <typeparam name="TValue">The type of the success value.</typeparam>
+    /// <typeparam name="TError">The type of the error value.</typeparam>
+    /// <returns>This <c>Result</c> as a <c>Pure</c>.</returns>
     /// <exception cref="System.InvalidCastException">self value is <c>Err</c>.</exception>
     public static Pure<TValue> AsPure<TValue, TError>(this Result<TValue, TError> self)
         where TValue : notnull
@@ -59,14 +59,14 @@ public static class ResultExtensions
     }
 
     /// <summary>
-    /// Returns the <c>self</c> value as the <c>Err</c> value.
+    /// Returns the <c>self</c> value as the <c>Fail</c>.
     /// Because this function may throw an Exception, its use is generally discouraged.
     /// Instead, prefer to use the <c>Match</c> function.
     /// </summary>
-    /// <param name="self">The <c>Result</c> value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
-    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
-    /// <returns>This <c>Result</c> value as a <c>Err</c> value.</returns>
+    /// <param name="self">The <c>Result</c>.</param>
+    /// <typeparam name="TValue">The type of the success value.</typeparam>
+    /// <typeparam name="TError">The type of the error value.</typeparam>
+    /// <returns>This <c>Result</c> as a <c>Err</c>.</returns>
     /// <exception cref="System.InvalidCastException">self value is <c>Ok</c>.</exception>
     public static Fail<TError> AsFail<TValue, TError>(this Result<TValue, TError> self)
         where TValue : notnull
@@ -76,12 +76,12 @@ public static class ResultExtensions
     }
 
     /// <summary>
-    /// Converts a <c>Result</c> value to an <c>Option</c> value.
+    /// Converts a <c>Result</c> to an <c>Option</c>.
     /// </summary>
-    /// <param name="self">The <c>Result</c> value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
-    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
-    /// <returns>This <c>Result</c> value as a <c>Option</c> value.</returns>
+    /// <param name="self">The <c>Result</c>.</param>
+    /// <typeparam name="TValue">The type of the success value.</typeparam>
+    /// <typeparam name="TError">The type of the error value.</typeparam>
+    /// <returns>This <c>Result</c> as an <c>Option</c>.</returns>
     public static Option<TValue> ToOption<TValue, TError>(this Result<TValue, TError> self)
         where TValue : notnull
         where TError : notnull
@@ -93,8 +93,8 @@ public static class ResultExtensions
     /// Transposes a <c>Result</c> of an <c>Option</c> into an <c>Option</c> of a <c>Result</c>.
     /// </summary>
     /// <param name="self">The <c>Result</c> of an <c>Option</c>.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
-    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
+    /// <typeparam name="TValue">The type of the success value.</typeparam>
+    /// <typeparam name="TError">The type of the error value.</typeparam>
     /// <returns>The <c>Option</c> of a <c>Result</c>.</returns>
     public static Option<Result<TValue, TError>> Transpose<TValue, TError>(this Result<Option<TValue>, TError> self)
         where TValue : notnull
@@ -124,14 +124,14 @@ public static class ResultExtensions
     }
 
     /// <summary>
-    /// Returns the contained <c>Ok</c> value, consuming the <c>self</c> value if it exists,
+    /// Returns the contained success value, consuming the <c>self</c> value if it exists,
     /// otherwise returns the value provided by a function.
     /// </summary>
-    /// <param name="self">The <c>Result</c> value.</param>
-    /// <param name="func">A function that provides a default value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
-    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
-    /// <returns>The contained <c>Ok</c> or default value.</returns>
+    /// <param name="self">The <c>Result</c>.</param>
+    /// <param name="func">The function that provides the default value.</param>
+    /// <typeparam name="TValue">The type of the success value.</typeparam>
+    /// <typeparam name="TError">The type of the error value.</typeparam>
+    /// <returns>The contained success or default value.</returns>
     public static TValue Default<TValue, TError>(this Result<TValue, TError> self, Func<TError, TValue> func)
         where TValue : notnull
         where TError : notnull
@@ -140,14 +140,14 @@ public static class ResultExtensions
     }
 
     /// <summary>
-    /// Returns the contained <c>Ok</c> value, consuming the <c>self</c> value if it exists,
+    /// Returns the contained success value, consuming the <c>self</c> value if it exists,
     /// otherwise returns the specified default value.
     /// </summary>
-    /// <param name="self">The <c>Result</c> value.</param>
+    /// <param name="self">The <c>Result</c>.</param>
     /// <param name="value">The specified default value.</param>
-    /// <typeparam name="TValue">The type of the contained <c>Ok</c> value.</typeparam>
-    /// <typeparam name="TError">The type of the contained <c>Err</c> value.</typeparam>
-    /// <returns>The contained <c>Ok</c> or default value.</returns>
+    /// <typeparam name="TValue">The type of the success value.</typeparam>
+    /// <typeparam name="TError">The type of the error value.</typeparam>
+    /// <returns>The contained success or default value.</returns>
     public static TValue Default<TValue, TError>(this Result<TValue, TError> self, TValue value)
         where TValue : notnull
         where TError : notnull
@@ -159,8 +159,8 @@ public static class ResultExtensions
     /// Transforms a <c>Result&lt;TValue, TError&gt;</c> into a <c>Result&lt;TOutput, TError&gt;</c>
     /// by applying a <c>mapping</c> function to the success value, leaving the error value untouched.
     /// </summary>
-    /// <param name="self">The <c>Result</c> value.</param>
-    /// <param name="mapping">The function to apply to a contained value.</param>
+    /// <param name="self">The <c>Result</c>.</param>
+    /// <param name="mapping">The function to apply to the contained value.</param>
     /// <typeparam name="TValue">The type of the success value.</typeparam>
     /// <typeparam name="TError">The type of the error value.</typeparam>
     /// <typeparam name="TOutput">The type of the output value.</typeparam>
@@ -178,7 +178,7 @@ public static class ResultExtensions
     /// by applying a <c>mapping</c> function to the error value, leaving the success value untouched.
     /// </summary>
     /// <param name="self">The <c>Result</c> value.</param>
-    /// <param name="mapping">The function to apply to a contained value.</param>
+    /// <param name="mapping">The function to apply to the contained value.</param>
     /// <typeparam name="TValue">The type of the success value.</typeparam>
     /// <typeparam name="TError">The type of the error value.</typeparam>
     /// <typeparam name="TOutput">The type of the output value.</typeparam>
@@ -195,7 +195,7 @@ public static class ResultExtensions
     /// Transforms a <c>Result&lt;TValue, TError&gt;</c> into a <c>Result&lt;TOutput, TError&gt;</c>
     /// by applying a <c>binder</c> function to the success value, leaving the error value untouched.
     /// </summary>
-    /// <param name="self">The <c>Result</c> value.</param>
+    /// <param name="self">The <c>Result</c>.</param>
     /// <param name="binder">The function to apply to the success value.</param>
     /// <typeparam name="TValue">The type of the success value.</typeparam>
     /// <typeparam name="TError">The type of the error value.</typeparam>
@@ -214,7 +214,7 @@ public static class ResultExtensions
     /// and applies an <c>ok</c> function to the success value, if the state is <c>Ok</c>,
     /// or applies an <c>error</c> function to the error value, if the state is <c>Err</c>.
     /// </summary>
-    /// <param name="self">The <c>Result</c> value.</param>
+    /// <param name="self">The <c>Result</c>.</param>
     /// <param name="ok">The function to apply to the success value.</param>
     /// <param name="error">The function to apply to the error value.</param>
     /// <typeparam name="TValue">The type of the success value.</typeparam>
@@ -233,7 +233,7 @@ public static class ResultExtensions
     /// and applies an <c>ok</c> function to the success value, if the state is <c>Ok</c>,
     /// or returns an <c>error</c> value, if the state is <c>Err</c>.
     /// </summary>
-    /// <param name="self">The <c>Result</c> value.</param>
+    /// <param name="self">The <c>Result</c>.</param>
     /// <param name="ok">The function to apply to the success value.</param>
     /// <param name="error">The output value.</param>
     /// <typeparam name="TValue">The type of the success value.</typeparam>
@@ -252,7 +252,7 @@ public static class ResultExtensions
     /// and applies an <c>ok</c> action to the success value, if the state is <c>Ok</c>,
     /// or applies an <c>error</c> action to the error value, if the state is <c>Err</c>.
     /// </summary>
-    /// <param name="self">The <c>Result</c> value.</param>
+    /// <param name="self">The <c>Result</c>.</param>
     /// <param name="ok">The action to apply to the success value.</param>
     /// <param name="error">The action to apply to the error value.</param>
     /// <typeparam name="TValue">The type of the success value.</typeparam>
