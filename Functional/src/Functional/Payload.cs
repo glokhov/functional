@@ -1,7 +1,7 @@
 namespace Functional;
 
 /// <summary>
-/// Represents a value.
+/// Holds a value.
 /// </summary>
 public closed record Payload<T>(T Value) where T : notnull
 {
