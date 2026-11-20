@@ -79,37 +79,85 @@ public union Result<T, TError>(Ok<T>, Error<TError>) where T : notnull where TEr
     }
 
     /// <summary>
-    /// Gets the value of the result if the result is <c>Ok</c>,
-    /// otherwise returns the specified default value.
+    /// Matches the result to a function that handles the <c>Ok</c> case and a function that handles the <c>Error</c> case.
     /// </summary>
-    /// <param name="value">The specified default value.</param>
-    /// <returns>
-    /// The result value if the result is <c>Ok</c>, otherwise the default value.
-    /// </returns>
-    public T DefaultValue(T value)
+    /// <param name="okAction">A function to handle the <c>Ok</c> case.</param>
+    /// <param name="errorAction">A function to handle the <c>Error</c> case.</param>
+    public void Match(Action<T> okAction, Action<TError> errorAction)
+    {
+        switch (this)
+        {
+            case Ok<T> ok:
+                okAction(ok.Value);
+                break;
+            case Error<TError> error:
+                errorAction(error.Value);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Matches the result to a function that handles the <c>Ok</c> case and a function that handles the <c>Error</c> case.
+    /// </summary>
+    /// <param name="okFunc">A function to handle the <c>Ok</c> case.</param>
+    /// <param name="errorFunc">A function to handle the <c>Error</c> case.</param>
+    /// <returns>The result of applying the appropriate function based on the result's state.</returns>
+    public TOutput Match<TOutput>(Func<T, TOutput> okFunc, Func<TError, TOutput> errorFunc)
     {
         return this switch
         {
-            Ok<T> ok => ok.Value,
-            Error<TError> => value
+            Ok<T> ok => okFunc(ok.Value),
+            Error<TError> error => errorFunc(error.Value)
+        };
+    }
+
+    /// <summary>
+    /// Matches the result to a function that handles the <c>Ok</c> case and a value that handles the <c>Error</c> case.
+    /// </summary>
+    /// <param name="okFunc">A function to handle the <c>Ok</c> case.</param>
+    /// <param name="errorValue">A value to handle the <c>Error</c> case.</param>
+    /// <returns>The result of applying the appropriate function based on the result's state.</returns>
+    public TOutput Match<TOutput>(Func<T, TOutput> okFunc, TOutput errorValue)
+    {
+        return this switch
+        {
+            Ok<T> ok => okFunc(ok.Value),
+            Error<TError> _ => errorValue
         };
     }
 
     /// <summary>
     /// Gets the value of the result if the result is <c>Ok</c>,
-    /// otherwise evaluates <paramref name="defThunk"/> and returns the result.
+    /// otherwise evaluates <paramref name="defaultFunc"/> and returns the result.
     /// </summary>
-    /// <param name="defThunk">A function that provides a default value when evaluated.</param>
+    /// <param name="defaultFunc">A function that provides a default value when evaluated.</param>
     /// <returns>
     /// The result value if the result is <c>Ok</c>,
-    /// otherwise the result of evaluating <paramref name="defThunk"/>.
+    /// otherwise the result of evaluating <paramref name="defaultFunc"/>.
     /// </returns>
-    public T DefaultWith(Func<T> defThunk)
+    public T Default(Func<T> defaultFunc)
     {
         return this switch
         {
             Ok<T> ok => ok.Value,
-            Error<TError> => defThunk()
+            Error<TError> => defaultFunc()
+        };
+    }
+
+    /// <summary>
+    /// Gets the value of the result if the result is <c>Ok</c>,
+    /// otherwise returns the specified default value.
+    /// </summary>
+    /// <param name="defaultValue">The specified default value.</param>
+    /// <returns>
+    /// The result value if the result is <c>Ok</c>, otherwise the default value.
+    /// </returns>
+    public T Default(T defaultValue)
+    {
+        return this switch
+        {
+            Ok<T> ok => ok.Value,
+            Error<TError> => defaultValue
         };
     }
 

@@ -66,33 +66,81 @@ public union Option<T>(Some<T>, None) where T : notnull
     }
 
     /// <summary>
-    /// Gets the value of the option if the option is <c>Some</c>, otherwise returns the specified default value.
+    /// Matches the option to a function that handles the <c>Some</c> case and a function that handles the <c>None</c> case.
     /// </summary>
-    /// <param name="value">The specified default value.</param>
-    /// <returns>The option if the option is <c>Some</c>, otherwise the default value.</returns>
-    public T DefaultValue(T value)
+    /// <param name="someAction">A function to handle the <c>Some</c> case.</param>
+    /// <param name="noneAction">A function to handle the <c>None</c> case.</param>
+    public void Match(Action<T> someAction, Action noneAction)
+    {
+        switch (this)
+        {
+            case Some<T> some:
+                someAction(some.Value);
+                break;
+            case Functional.None:
+                noneAction();
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Matches the option to a function that handles the <c>Some</c> case and a function that handles the <c>None</c> case.
+    /// </summary>
+    /// <param name="someFunc">A function to handle the <c>Some</c> case.</param>
+    /// <param name="noneFunc">A function to handle the <c>None</c> case.</param>
+    /// <returns>The result of applying the appropriate function based on the option's state.</returns>
+    public TOutput Match<TOutput>(Func<T, TOutput> someFunc, Func<TOutput> noneFunc)
     {
         return this switch
         {
-            Some<T> some => some.Value,
-            Functional.None => value
+            Some<T> some => someFunc(some.Value),
+            Functional.None => noneFunc()
+        };
+    }
+
+    /// <summary>
+    /// Matches the option to a function that handles the <c>Some</c> case and a value that handles the <c>None</c> case.
+    /// </summary>
+    /// <param name="someFunc">A function to handle the <c>Some</c> case.</param>
+    /// <param name="noneValue">A value to handle the <c>None</c> case.</param>
+    /// <returns>The result of applying the appropriate function based on the option's state.</returns>
+    public TOutput Match<TOutput>(Func<T, TOutput> someFunc, TOutput noneValue)
+    {
+        return this switch
+        {
+            Some<T> some => someFunc(some.Value),
+            Functional.None => noneValue
         };
     }
 
     /// <summary>
     /// Gets the value of the option if the option is <c>Some</c>,
-    /// otherwise evaluates <paramref name="defThunk"/> and returns the result.
+    /// otherwise evaluates <paramref name="defaultFunc"/> and returns the result.
     /// </summary>
-    /// <param name="defThunk">A thunk that provides a default value when evaluated.</param>
+    /// <param name="defaultFunc">A function that provides a default value when evaluated.</param>
     /// <returns>
-    /// The option if the option is <c>Some</c>, otherwise the result of evaluating <paramref name="defThunk"/>.
+    /// The option if the option is <c>Some</c>, otherwise the result of evaluating <paramref name="defaultFunc"/>.
     /// </returns>
-    public T DefaultWith(Func<T> defThunk)
+    public T Default(Func<T> defaultFunc)
     {
         return this switch
         {
             Some<T> some => some.Value,
-            Functional.None => defThunk()
+            Functional.None => defaultFunc()
+        };
+    }
+
+    /// <summary>
+    /// Gets the value of the option if the option is <c>Some</c>, otherwise returns the specified default value.
+    /// </summary>
+    /// <param name="defaultValue">The specified default value.</param>
+    /// <returns>The option if the option is <c>Some</c>, otherwise the default value.</returns>
+    public T Default(T defaultValue)
+    {
+        return this switch
+        {
+            Some<T> some => some.Value,
+            Functional.None => defaultValue
         };
     }
 

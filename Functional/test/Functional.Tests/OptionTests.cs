@@ -148,7 +148,7 @@ public sealed class OptionTests
     public void Option_DefaultValue_Returns_Value_For_Some()
     {
         var option = Option<string>.Some("text");
-        var value = option.DefaultValue("default");
+        var value = option.Default("default");
 
         Assert.Equal("text", value);
     }
@@ -157,7 +157,7 @@ public sealed class OptionTests
     public void Option_DefaultValue_Returns_Default_For_None()
     {
         var option = Option<string>.None;
-        var value = option.DefaultValue("default");
+        var value = option.Default("default");
 
         Assert.Equal("default", value);
     }
@@ -166,7 +166,7 @@ public sealed class OptionTests
     public void Option_DefaultWith_Returns_Value_For_Some()
     {
         var option = Option<string>.Some("text");
-        var value = option.DefaultWith(() => "default");
+        var value = option.Default(() => "default");
 
         Assert.Equal("text", value);
     }
@@ -175,7 +175,7 @@ public sealed class OptionTests
     public void Option_DefaultWith_Returns_Default_For_None()
     {
         var option = Option<string>.None;
-        var value = option.DefaultWith(() => "default");
+        var value = option.Default(() => "default");
 
         Assert.Equal("default", value);
     }
@@ -306,5 +306,97 @@ public sealed class OptionTests
         string? value = option;
 
         Assert.Null(value);
+    }
+
+    [Fact]
+    public void Option_Match_Action_Invokes_Some_Action_For_Some()
+    {
+        var option = Option<int>.Some(42);
+        var someValue = 0;
+        var noneCalled = false;
+
+        option.Match(value => someValue = value, () => noneCalled = true);
+
+        Assert.Equal(42, someValue);
+        Assert.False(noneCalled);
+    }
+
+    [Fact]
+    public void Option_Match_Action_Invokes_None_Action_For_None()
+    {
+        var option = Option<int>.None;
+        var someCalled = false;
+        var noneCalled = false;
+
+        option.Match(_ => someCalled = true, () => noneCalled = true);
+
+        Assert.False(someCalled);
+        Assert.True(noneCalled);
+    }
+
+    [Fact]
+    public void Option_Match_Func_Returns_Some_Result_For_Some()
+    {
+        var option = Option<string>.Some("text");
+        var length = option.Match(value => value.Length, () => -1);
+
+        Assert.Equal(4, length);
+    }
+
+    [Fact]
+    public void Option_Match_Func_Returns_None_Result_For_None()
+    {
+        var option = Option<string>.None;
+        var length = option.Match(value => value.Length, () => -1);
+
+        Assert.Equal(-1, length);
+    }
+
+    [Fact]
+    public void Option_Match_Func_Does_Not_Evaluate_None_Func_For_Some()
+    {
+        var option = Option<string>.Some("text");
+        var noneCalled = false;
+
+        option.Match(value => value.Length, () =>
+        {
+            noneCalled = true;
+            return -1;
+        });
+
+        Assert.False(noneCalled);
+    }
+
+    [Fact]
+    public void Option_Match_Func_Does_Not_Evaluate_Some_Func_For_None()
+    {
+        var option = Option<string>.None;
+        var someCalled = false;
+
+        option.Match(value =>
+        {
+            someCalled = true;
+            return value.Length;
+        }, () => -1);
+
+        Assert.False(someCalled);
+    }
+
+    [Fact]
+    public void Option_Match_Value_Returns_Some_Result_For_Some()
+    {
+        var option = Option<string>.Some("text");
+        var length = option.Match(value => value.Length, -1);
+
+        Assert.Equal(4, length);
+    }
+
+    [Fact]
+    public void Option_Match_Value_Returns_None_Value_For_None()
+    {
+        var option = Option<string>.None;
+        var length = option.Match(value => value.Length, -1);
+
+        Assert.Equal(-1, length);
     }
 }

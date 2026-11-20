@@ -208,7 +208,7 @@ public sealed class ResultTests
         var result = Result<string, int>.Ok("text");
 
         Assert.True(result.IsOk);
-        Assert.Equal("text", result.DefaultValue("default"));
+        Assert.Equal("text", result.Default("default"));
     }
 
     [Fact]
@@ -217,7 +217,7 @@ public sealed class ResultTests
         var result = Result<int, string>.Error("error");
 
         Assert.True(result.IsError);
-        Assert.Equal(42, result.DefaultValue(42));
+        Assert.Equal(42, result.Default(42));
     }
 
     [Fact]
@@ -226,7 +226,7 @@ public sealed class ResultTests
         var result = Result<string, int>.Ok("text");
 
         Assert.True(result.IsOk);
-        Assert.Equal("text", result.DefaultWith(() => "default"));
+        Assert.Equal("text", result.Default(() => "default"));
     }
 
     [Fact]
@@ -235,7 +235,7 @@ public sealed class ResultTests
         var result = Result<int, string>.Error("error");
 
         Assert.True(result.IsError);
-        Assert.Equal(42, result.DefaultWith(() => 42));
+        Assert.Equal(42, result.Default(() => 42));
     }
 
     [Fact]
@@ -312,5 +312,97 @@ public sealed class ResultTests
         {
             Assert.Equal(42, error.Value);
         }
+    }
+
+    [Fact]
+    public void Result_Match_Action_Invokes_Ok_Action_For_Ok()
+    {
+        var result = Result<int, string>.Ok(42);
+        var okValue = 0;
+        string? errorValue = null;
+
+        result.Match(value => okValue = value, error => errorValue = error);
+
+        Assert.Equal(42, okValue);
+        Assert.Null(errorValue);
+    }
+
+    [Fact]
+    public void Result_Match_Action_Invokes_Error_Action_For_Error()
+    {
+        var result = Result<int, string>.Error("error");
+        var okCalled = false;
+        string? errorValue = null;
+
+        result.Match(_ => okCalled = true, error => errorValue = error);
+
+        Assert.False(okCalled);
+        Assert.Equal("error", errorValue);
+    }
+
+    [Fact]
+    public void Result_Match_Func_Returns_Ok_Result_For_Ok()
+    {
+        var result = Result<string, int>.Ok("text");
+        var output = result.Match(value => value.Length, error => -error);
+
+        Assert.Equal(4, output);
+    }
+
+    [Fact]
+    public void Result_Match_Func_Returns_Error_Result_For_Error()
+    {
+        var result = Result<string, int>.Error(42);
+        var output = result.Match(value => value.Length, error => -error);
+
+        Assert.Equal(-42, output);
+    }
+
+    [Fact]
+    public void Result_Match_Func_Does_Not_Evaluate_Error_Func_For_Ok()
+    {
+        var result = Result<string, int>.Ok("text");
+        var errorCalled = false;
+
+        result.Match(value => value.Length, error =>
+        {
+            errorCalled = true;
+            return error;
+        });
+
+        Assert.False(errorCalled);
+    }
+
+    [Fact]
+    public void Result_Match_Func_Does_Not_Evaluate_Ok_Func_For_Error()
+    {
+        var result = Result<string, int>.Error(42);
+        var okCalled = false;
+
+        result.Match(value =>
+        {
+            okCalled = true;
+            return value.Length;
+        }, error => error);
+
+        Assert.False(okCalled);
+    }
+
+    [Fact]
+    public void Result_Match_Value_Returns_Ok_Result_For_Ok()
+    {
+        var result = Result<string, int>.Ok("text");
+        var output = result.Match(value => value.Length, -1);
+
+        Assert.Equal(4, output);
+    }
+
+    [Fact]
+    public void Result_Match_Value_Returns_Error_Value_For_Error()
+    {
+        var result = Result<string, int>.Error(42);
+        var output = result.Match(value => value.Length, -1);
+
+        Assert.Equal(-1, output);
     }
 }

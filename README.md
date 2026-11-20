@@ -76,11 +76,20 @@ var bound = Option<string>.Some("42").Bind(ParseInt);           // Some(42)
 var empty = Option<string>.None.Bind(ParseInt);                 // None
 ```
 
-`DefaultValue` and `DefaultWith` unwrap the value:
+`Match` handles both cases with functions or actions. The `None` case takes a function or a value:
 
 ```csharp
-var value = ParseInt("42").DefaultValue(0);                     // 42
-var fallback = ParseInt("forty two").DefaultWith(() => 0);      // 0
+var text = ParseInt("42").Match(value => $"Some({value})", () => "nothing");    // Some(42)
+var number = ParseInt("forty two").Match(value => value * 2, -1);               // -1
+
+ParseInt("42").Match(value => Console.WriteLine(value), () => Console.WriteLine("nothing"));
+```
+
+`Default` unwraps the value, taking a fallback value or a function that provides it:
+
+```csharp
+var value = ParseInt("42").Default(0);                          // 42
+var fallback = ParseInt("forty two").Default(() => 0);          // 0
 ```
 
 A nullable reference converts to an option and back. Assign `null` to a nullable-typed
@@ -130,11 +139,20 @@ var reported = Divide(42, 0).MapError(err => err.ToUpper());    // Error(DIVISIO
 var bound = Divide(84, 2).Bind(value => Divide(value, 0));      // Error(division by zero)
 ```
 
-`DefaultValue` and `DefaultWith` unwrap the success value:
+`Match` handles both cases with functions or actions. The `Error` case takes a function or a value:
 
 ```csharp
-var value = Divide(84, 2).DefaultValue(0);                      // 42
-var fallback = Divide(42, 0).DefaultWith(() => 0);              // 0
+var text = Divide(84, 2).Match(value => $"Ok({value})", err => $"Error({err})");   // Ok(42)
+var number = Divide(42, 0).Match(value => value * 2, -1);                          // -1
+
+Divide(84, 2).Match(value => Console.WriteLine(value), err => Console.WriteLine(err));
+```
+
+`Default` unwraps the success value, taking a fallback value or a function that provides it:
+
+```csharp
+var value = Divide(84, 2).Default(0);                           // 42
+var fallback = Divide(42, 0).Default(() => 0);                  // 0
 ```
 
 ## Conversions
