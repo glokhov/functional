@@ -1,6 +1,6 @@
 # Functional.Monad
 
-[![CI](https://github.com/glokhov/functional/actions/workflows/ci.yml/badge.svg)](https://github.com/glokhov/functional/actions/workflows/ci.yml)
+[![CI](https://github.com/glokhov/functional/actions/workflows/build.yml/badge.svg)](https://github.com/glokhov/functional/actions/workflows/build.yml)
 [![NuGet](https://img.shields.io/nuget/v/Functional.Monad)](https://www.nuget.org/packages/Functional.Monad)
 
 `Option` and `Result` types for C#, built on unions.
