@@ -1,88 +1,139 @@
 namespace Functional;
 
-/// <summary>
-/// The type <c>Option</c> has two states,
-/// <c>Some</c>, containing a value, and
-/// <c>None</c>, containing no value.
-/// </summary>
-/// <typeparam name="TValue">The type of the value.</typeparam>
-public readonly record struct Option<TValue> where TValue : notnull
+/// <summary>The type of optional values.</summary>
+/// <remarks>
+/// Use the constructors <see cref="Option{T}.Some(T)"/> and <see cref="Option{T}.None"/>
+/// to create values of this type.
+/// </remarks>
+public union Option<T>(Some<T>, None) where T : notnull
 {
-    private Option(TValue value)
+    /// <summary>
+    /// Do not use this constructor directly. Use <see cref="Option{T}.Some(T)"/>
+    /// or <see cref="Option{T}.None"/> instead.
+    /// </summary>
+    public Option() : this(default(None))
     {
-        Value = value ?? throw new ArgumentNullException(nameof(value));
-        IsSome = true;
     }
 
     /// <summary>
-    /// Creates a <c>Some</c> value.
+    /// Creates the presence of a value.
     /// </summary>
-    /// <param name="value">The input value.</param>
-    /// <returns>The <c>Option</c> representation of the input value.</returns>
-    public static Option<TValue> Some(TValue value)
+    public static Option<T> Some(T value) => new Some<T>(value);
+
+    /// <summary>
+    /// Represents the absence of a value.
+    /// </summary>
+    public static readonly Option<T> None = default(None);
+
+    /// <summary>
+    /// Returns true if the option is Some.
+    /// </summary>
+    public bool IsSome => this is Some<T>;
+
+    /// <summary>
+    /// Returns true if the option is None.
+    /// </summary>
+    public bool IsNone => this is None;
+
+    /// <summary>
+    /// Binds the option to a function that returns another option.
+    /// </summary>
+    /// <param name="binder">A function to bind to.</param>
+    /// <returns>An option of the output type of the binder.</returns>
+    public Option<TOutput> Bind<TOutput>(Func<T, Option<TOutput>> binder) where TOutput : notnull
     {
-        return new Option<TValue>(value);
+        return this switch
+        {
+            Some<T> some => binder(some.Value),
+            Functional.None => Option<TOutput>.None
+        };
     }
 
     /// <summary>
-    /// The <c>None</c> value.
+    /// Maps the option to another option using a mapping function.
     /// </summary>
-    public static readonly Option<TValue> None = default;
-
-    internal TValue Value { get; }
-
-    /// <summary>
-    /// Returns <c>true</c> if the option is <c>Some</c>.
-    /// </summary>
-    public bool IsSome { get; }
-
-    /// <summary>
-    /// Returns <c>true</c> if the option is <c>None</c>.
-    /// </summary>
-    public bool IsNone => !IsSome;
-
-    /// <summary>
-    /// Returns the string representation of this instance.
-    /// </summary>
-    /// <returns>The string representation of this instance.</returns>
-    public override string ToString()
+    /// <param name="mapping">A function to apply to the option value.</param>
+    /// <returns>
+    /// An option of the input value after applying the mapping function, or <c>None</c> if the input is <c>None</c>.
+    /// </returns>
+    public Option<TOutput> Map<TOutput>(Func<T, TOutput> mapping) where TOutput : notnull
     {
-        return IsSome ? $"Some({Value})" : "None";
+        return this switch
+        {
+            Some<T> some => Option<TOutput>.Some(mapping(some.Value)),
+            Functional.None => Option<TOutput>.None
+        };
     }
 
     /// <summary>
-    /// Converts a <c>Pure</c> value to an <c>Option</c> value.
+    /// Gets the value of the option if the option is <c>Some</c>, otherwise returns the specified default value.
     /// </summary>
-    /// <param name="pure">The <c>Pure</c> value.</param>
-    /// <returns>The <c>Option</c> value.</returns>
-    public static implicit operator Option<TValue>(Pure<TValue> pure) => Some(pure.Value);
-
-    /// <summary>
-    /// Converts a <c>Fail</c> value to <c>None</c>.
-    /// </summary>
-    /// <param name="fail">The <c>Fail</c> value.</param>
-    /// <returns><c>None</c>.</returns>
-    public static implicit operator Option<TValue>(Fail<Unit> fail) => default;
-
-    /// <summary>
-    /// Converts an <c>Option</c> value to a <c>Pure</c> value.
-    /// </summary>
-    /// <param name="option">The <c>Option</c> value.</param>
-    /// <returns>The <c>Pure</c> value.</returns>
-    /// <exception cref="InvalidCastException"><c>Option</c> value is <c>None</c>.</exception>
-    public static explicit operator Pure<TValue>(Option<TValue> option)
+    /// <param name="value">The specified default value.</param>
+    /// <returns>The option if the option is <c>Some</c>, otherwise the default value.</returns>
+    public T DefaultValue(T value)
     {
-        return option.IsSome ? new Pure<TValue>(option.Value) : throw new InvalidCastException();
+        return this switch
+        {
+            Some<T> some => some.Value,
+            Functional.None => value
+        };
     }
 
     /// <summary>
-    /// Converts an <c>Option</c> value to a <c>Fail</c> value.
+    /// Gets the value of the option if the option is <c>Some</c>,
+    /// otherwise evaluates <paramref name="defThunk"/> and returns the result.
     /// </summary>
-    /// <param name="option">The <c>Option</c> value.</param>
-    /// <returns>The <c>Fail</c> value.</returns>
-    /// <exception cref="InvalidCastException"><c>Option</c> value is <c>Some</c>.</exception>
-    public static explicit operator Fail<Unit>(Option<TValue> option)
+    /// <param name="defThunk">A thunk that provides a default value when evaluated.</param>
+    /// <returns>
+    /// The option if the option is <c>Some</c>, otherwise the result of evaluating <paramref name="defThunk"/>.
+    /// </returns>
+    public T DefaultWith(Func<T> defThunk)
     {
-        return option.IsNone ? default : throw new InvalidCastException();
+        return this switch
+        {
+            Some<T> some => some.Value,
+            Functional.None => defThunk()
+        };
     }
+
+    /// <summary>
+    /// Converts the option to a <see cref="Result{T, TError}"/>.
+    /// </summary>
+    /// <returns>
+    /// A result that is <c>Ok</c> with the value if the option is <c>Some</c>,
+    /// otherwise an <c>Error</c> with <see cref="Unit"/>.
+    /// </returns>
+    public Result<T, Unit> ToResult()
+    {
+        return this switch
+        {
+            Some<T> some => Result<T, Unit>.Ok(some.Value),
+            Functional.None => Result<T, Unit>.Error(default)
+        };
+    }
+
+    /// <summary>
+    /// Converts a <see cref="Some{T}"/> to an <see cref="Option{T}"/>.
+    /// </summary>
+    public static implicit operator Option<T>(Some<T> some) => new(some);
+
+    /// <summary>
+    /// Converts a <see cref="None"/> to an <see cref="Option{T}"/>.
+    /// </summary>
+    public static implicit operator Option<T>(None none) => new(none);
+
+    /// <summary>
+    /// Converts a nullable value to an <see cref="Option{T}"/>.
+    /// </summary>
+    public static implicit operator Option<T>(T? value) => value is null ? None : Some(value);
+
+    /// <summary>
+    /// Converts an <see cref="Option{T}"/> to a nullable value.
+    /// </summary>
+    public static implicit operator T?(Option<T> option) => option is Some<T> some ? some.Value : default;
+
+    /// <summary>
+    /// Returns <c>Option(Value)</c> or <c>None</c>.
+    /// </summary>
+    public override string ToString() => $"{Value}";
 }

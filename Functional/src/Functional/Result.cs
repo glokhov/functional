@@ -1,104 +1,145 @@
 namespace Functional;
 
 /// <summary>
-/// The type <c>Result</c> has two states,
-/// <c>Ok</c>, representing a success and containing a success value, and
-/// <c>Err</c>, representing an error and containing an error value.
+/// Helper type for error handling without exceptions.
 /// </summary>
-/// <typeparam name="TValue">The type of the success value.</typeparam>
-/// <typeparam name="TError">The type of the error value.</typeparam>
-public readonly record struct Result<TValue, TError> where TValue : notnull where TError : notnull
+public union Result<T, TError>(Ok<T>, Error<TError>) where T : notnull where TError : notnull
 {
-    private Result(TValue value)
+    /// <summary>
+    /// Do not use this constructor directly. Use <see cref="Result{T, TError}.Ok(T)"/>
+    /// or <see cref="Result{T, TError}.Error(TError)"/> instead.
+    /// </summary>
+    public Result() : this(new Error<TError>(default!))
     {
-        Value = value ?? throw new ArgumentNullException(nameof(value));
-        Error = default!;
-        IsOk = true;
-    }
-
-    private Result(TError error)
-    {
-        Error = error ?? throw new ArgumentNullException(nameof(error));
-        Value = default!;
-        IsOk = false;
     }
 
     /// <summary>
-    /// Creates an <c>Ok</c> value.
+    /// Creates an OK or a Successful result.
     /// </summary>
-    /// <param name="value">The success value.</param>
-    /// <returns>The <c>Result</c> representation of the success value.</returns>
-    public static Result<TValue, TError> Ok(TValue value)
+    public static Result<T, TError> Ok(T value) => new Ok<T>(value);
+
+    /// <summary>
+    /// Creates an Error or a Failure.
+    /// </summary>
+    public static Result<T, TError> Error(TError value) => new Error<TError>(value);
+
+    /// <summary>
+    /// Returns true if the result is OK.
+    /// </summary>
+    public bool IsOk => this is Ok<T>;
+
+    /// <summary>
+    /// Returns true if the result is an Error.
+    /// </summary>
+    public bool IsError => this is Error<TError>;
+
+    /// <summary>
+    /// Binds the result to a function that returns another result.
+    /// </summary>
+    /// <param name="binder">A function to bind to.</param>
+    public Result<TOutput, TError> Bind<TOutput>(Func<T, Result<TOutput, TError>> binder) where TOutput : notnull
     {
-        return new Result<TValue, TError>(value);
+        return this switch
+        {
+            Ok<T> ok => binder(ok.Value),
+            Error<TError> error => Result<TOutput, TError>.Error(error.Value)
+        };
     }
 
     /// <summary>
-    /// Creates an <c>Err</c> value.
+    /// Maps the result to another result using a mapping function.
     /// </summary>
-    /// <param name="error">The error value.</param>
-    /// <returns>The <c>Result</c> representation of the error value.</returns>
-    public static Result<TValue, TError> Err(TError error)
+    /// <param name="mapping">A function to apply to the OK result value.</param>
+    /// <returns>
+    /// A result of the input value after applying the mapping function, or <c>Error</c> if the input is <c>Error</c>.
+    /// </returns>
+    public Result<TOutput, TError> Map<TOutput>(Func<T, TOutput> mapping) where TOutput : notnull
     {
-        return new Result<TValue, TError>(error);
-    }
-
-    internal TValue Value { get; }
-
-    internal TError Error { get; }
-
-    /// <summary>
-    /// Returns <c>true</c> if the result is <c>Ok</c>.
-    /// </summary>
-    public bool IsOk { get; }
-
-    /// <summary>
-    /// Returns <c>true</c> if the result is <c>Err</c>.
-    /// </summary>
-    public bool IsErr => !IsOk;
-
-    /// <summary>
-    /// Returns the string representation of this instance.
-    /// </summary>
-    /// <returns>The string representation of this instance.</returns>
-    public override string ToString()
-    {
-        return IsOk ? $"Ok({Value})" : $"Err({Error})";
+        return this switch
+        {
+            Ok<T> ok => Result<TOutput, TError>.Ok(mapping(ok.Value)),
+            Error<TError> error => Result<TOutput, TError>.Error(error.Value)
+        };
     }
 
     /// <summary>
-    /// Converts a <c>Pure</c> value to a <c>Result</c> value.
+    /// Maps the error of the result to another error using a mapping function.
     /// </summary>
-    /// <param name="pure">The <c>Pure</c> value.</param>
-    /// <returns>The <c>Result</c> value.</returns>
-    public static implicit operator Result<TValue, TError>(Pure<TValue> pure) => Ok(pure.Value);
-
-    /// <summary>
-    /// Converts a <c>Fail</c> value to a <c>Result</c> value.
-    /// </summary>
-    /// <param name="fail">The <c>Pure</c> value.</param>
-    /// <returns>The <c>Result</c> value.</returns>
-    public static implicit operator Result<TValue, TError>(Fail<TError> fail) => Err(fail.Error);
-
-    /// <summary>
-    /// Converts a <c>Result</c> value to a <c>Pure</c> value.
-    /// </summary>
-    /// <param name="result">The <c>Result</c> value.</param>
-    /// <returns>The <c>Pure</c> value.</returns>
-    /// <exception cref="InvalidCastException"><c>Result</c> value is <c>Err</c>.</exception>
-    public static explicit operator Pure<TValue>(Result<TValue, TError> result)
+    /// <param name="mapping">A function to apply to the Error value.</param>
+    /// <returns>
+    /// A result of the input value after applying the mapping function, or <c>Ok</c> if the input is <c>Ok</c>.
+    /// </returns>
+    public Result<T, TOutput> MapError<TOutput>(Func<TError, TOutput> mapping) where TOutput : notnull
     {
-        return result.IsOk ? new Pure<TValue>(result.Value) : throw new InvalidCastException();
+        return this switch
+        {
+            Ok<T> ok => Result<T, TOutput>.Ok(ok.Value),
+            Error<TError> error => Result<T, TOutput>.Error(mapping(error.Value))
+        };
     }
 
     /// <summary>
-    /// Converts a <c>Result</c> value to a <c>Fail</c> value.
+    /// Gets the value of the result if the result is <c>Ok</c>,
+    /// otherwise returns the specified default value.
     /// </summary>
-    /// <param name="result">The <c>Result</c> value.</param>
-    /// <returns>The <c>Fail</c> value.</returns>
-    /// <exception cref="InvalidCastException"><c>Result</c> value is <c>Ok</c>.</exception>
-    public static explicit operator Fail<TError>(Result<TValue, TError> result)
+    /// <param name="value">The specified default value.</param>
+    /// <returns>
+    /// The result value if the result is <c>Ok</c>, otherwise the default value.
+    /// </returns>
+    public T DefaultValue(T value)
     {
-        return result.IsErr ? new Fail<TError>(result.Error) : throw new InvalidCastException();
+        return this switch
+        {
+            Ok<T> ok => ok.Value,
+            Error<TError> => value
+        };
     }
+
+    /// <summary>
+    /// Gets the value of the result if the result is <c>Ok</c>,
+    /// otherwise evaluates <paramref name="defThunk"/> and returns the result.
+    /// </summary>
+    /// <param name="defThunk">A function that provides a default value when evaluated.</param>
+    /// <returns>
+    /// The result value if the result is <c>Ok</c>,
+    /// otherwise the result of evaluating <paramref name="defThunk"/>.
+    /// </returns>
+    public T DefaultWith(Func<T> defThunk)
+    {
+        return this switch
+        {
+            Ok<T> ok => ok.Value,
+            Error<TError> => defThunk()
+        };
+    }
+
+    /// <summary>
+    /// Converts the result to an <see cref="Option{T}"/>.
+    /// </summary>
+    /// <returns>
+    /// An option containing the value if the result is <c>Ok</c>, otherwise <c>None</c>.
+    /// </returns>
+    public Option<T> ToOption()
+    {
+        return this switch
+        {
+            Ok<T> ok => Option<T>.Some(ok.Value),
+            Error<TError> => Option<T>.None
+        };
+    }
+
+    /// <summary>
+    /// Converts an <see cref="Ok{T}"/> to a <see cref="Result{T, TError}"/>.
+    /// </summary>
+    public static implicit operator Result<T, TError>(Ok<T> ok) => new(ok);
+
+    /// <summary>
+    /// Converts an <see cref="Error{TError}"/> to a <see cref="Result{T, TError}"/>.
+    /// </summary>
+    public static implicit operator Result<T, TError>(Error<TError> error) => new(error);
+
+    /// <summary>
+    /// Returns <c>Ok(Value)</c> or <c>Error(Value)</c>.
+    /// </summary>
+    public override string ToString() => $"{Value}";
 }

@@ -1,54 +1,48 @@
+﻿using static Functional.Prelude;
+
 namespace Functional.Tests;
 
 public sealed class PreludeTests
 {
     [Fact]
-    public void Some_Returns_Pure_Value()
+    public void Prelude_Some()
     {
-        Assert.Equal(new Pure<string>("Value"), Some("Value"));
+        Assert.Equal(Option<string>.Some("text"), Some("text"));
     }
 
     [Fact]
-    public void None_Returns_Fail_Unit()
+    public void Prelude_Some_Value()
     {
-        Assert.Equal(new Fail<Unit>(), None);
+        Assert.Equal(Option<int>.Some(42), Some(42));
     }
 
     [Fact]
-    public void Ok_Returns_Pure_Value()
+    public void Prelude_None()
     {
-        Assert.Equal(new Pure<string>("Value"), Ok("Value"));
+        Assert.Equal(Option<string>.None, Nothing);
     }
 
     [Fact]
-    public void Err_Returns_Fail_Error()
+    public void Prelude_Ok()
     {
-        Assert.Equal(new Fail<string>("Error"), Err("Error"));
+        Assert.Equal(Result<string, int>.Ok("text"), Ok("text"));
     }
 
     [Fact]
-    public void If_Value_Identity_Returns_Same_Value()
+    public void Prelude_Ok_Value()
     {
-        const int some = 42;
-
-        var result = Identity(some);
-
-        Assert.Equal(some, result);
+        Assert.Equal(Result<int, string>.Ok(42), Ok(42));
     }
 
     [Fact]
-    public void If_Object_Identity_Returns_Same_Object()
+    public void Prelude_Error()
     {
-        const string some = "42";
-
-        var result = Identity(some);
-
-        Assert.Same(some, result);
+        Assert.Equal(Result<int, string>.Error("error"), Error("error"));
     }
 
     [Fact]
-    public void Ignore_Returns_Unit()
+    public void Prelude_Error_Value()
     {
-        Assert.Equal(Unit.Default, "Some".Ignore());
+        Assert.Equal(Result<string, int>.Error(42), Error(42));
     }
 }

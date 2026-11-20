@@ -1,28 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-        <LangVersion>latest</LangVersion>
+        <TargetFramework>net11.0</TargetFramework>
+        <LangVersion>preview</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Authors>Gennadiy Lokhov</Authors>
         <Copyright>Copyright © Gennadiy Lokhov</Copyright>
-        <Description>Simple Option and Result monad implementation for C#</Description>
+        <Description>Option and Result types for C#, built on unions.</Description>
         <PackageId>Functional.Monad</PackageId>
         <PackageTags>functional;monad;option;result</PackageTags>
         <PackageProjectUrl>https://github.com/glokhov/functional</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageReadmeFile>CSHARP.md</PackageReadmeFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/glokhov/functional.git</RepositoryUrl>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <Version>0.7.1</Version>
+        <Version>0.8.0</Version>
     </PropertyGroup>
+    
     <ItemGroup>
-        <None Include="../../../CSHARP.md" Pack="true" Visible="true" PackagePath="/" />
+        <InternalsVisibleTo Include="Functional.Tests" />
     </ItemGroup>
+
     <ItemGroup>
-        <None Include="../../../README.md" Pack="true" Visible="true" PackagePath="/" />
+        <None Include="..\..\..\README.md" Pack="true" Visible="false" PackagePath="\" />
     </ItemGroup>
+
 </Project>

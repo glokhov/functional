@@ -3,97 +3,314 @@ namespace Functional.Tests;
 public sealed class ResultTests
 {
     [Fact]
-    public void If_Value_Is_Null_Ok_Throws_ArgumentNullException()
+    public void Default()
     {
-        Assert.Throws<ArgumentNullException>(() => Result<string, string>.Ok(null!));
+        Result<string, int> result = default;
+
+        Assert.False(result.IsOk);
+        Assert.False(result.IsError);
+        Assert.Null(result.Value);
+        Assert.Equal("", $"{result}");
     }
 
     [Fact]
-    public void If_Error_Is_Null_Err_Throws_ArgumentNullException()
+    public void Default_Constructor_Nullable_Error_Throws_ArgumentNullException()
     {
-        Assert.Throws<ArgumentNullException>(() => Result<string, string>.Err(null!));
+        Assert.Throws<ArgumentNullException>(() => new Result<int, string>());
     }
 
     [Fact]
-    public void Default_Is_Error()
+    public void Default_Constructor_Value_Error_Returns_Error()
     {
-        Result<string, string> result = default;
-        Assert.True(result.IsErr);
+        var result = new Result<string, int>();
+
+        Assert.True(result.IsError);
+        Assert.False(result.IsOk);
+        Assert.NotNull(result.Value);
+        Assert.Equal("Error(0)", $"{result}");
     }
 
     [Fact]
-    public void If_Ok_IsOk_Returns_True()
+    public void Ok_Constructor_Creates_Ok()
     {
-        Assert.True(Result<string, string>.Ok("Ok").IsOk);
+        var result = new Result<string, int>("text");
+
+        Assert.True(result.IsOk);
+        Assert.False(result.IsError);
     }
 
     [Fact]
-    public void If_Err_IsOk_Returns_False()
+    public void Error_Constructor_Creates_Error()
     {
-        Assert.False(Result<string, string>.Err("Err").IsOk);
+        var result = new Result<string, int>(42);
+
+        Assert.True(result.IsError);
+        Assert.False(result.IsOk);
     }
 
     [Fact]
-    public void If_Ok_IsErr_Returns_False()
+    public void Result_Matches_On_Ok()
     {
-        Assert.False(Result<string, string>.Ok("Ok").IsErr);
+        var result = Result<string, int>.Ok("text");
+
+        Assert.True(result.IsOk);
+        Assert.False(result.IsError);
+
+        Assert.Equal("Ok(text)", $"{result}");
+
+        if (result is Ok<string> ok)
+        {
+            Assert.Equal("text", ok.Value);
+        }
     }
 
     [Fact]
-    public void If_Err_IsErr_Returns_True()
+    public void Result_Matches_On_Ok_Value()
     {
-        Assert.True(Result<string, string>.Err("Err").IsErr);
+        var result = Result<int, string>.Ok(42);
+
+        Assert.True(result.IsOk);
+        Assert.False(result.IsError);
+
+        Assert.Equal("Ok(42)", $"{result}");
+
+        if (result is Ok<int> ok)
+        {
+            Assert.Equal(42, ok.Value);
+        }
     }
 
     [Fact]
-    public void If_Ok_ToString_Returns_Ok_Value()
+    public void Result_Matches_On_Error()
     {
-        Assert.Equal("Ok(Value)", Result<string, string>.Ok("Value").ToString());
+        var result = Result<int, string>.Error("text");
+
+        Assert.True(result.IsError);
+        Assert.False(result.IsOk);
+
+        Assert.Equal("Error(text)", result.ToString());
+
+        if (result is Error<string> error)
+        {
+            Assert.Equal("text", error.Value);
+        }
     }
 
     [Fact]
-    public void If_Err_ToString_Returns_Err_Error()
+    public void Result_Matches_On_Error_Value()
     {
-        Assert.Equal("Err(Error)", Result<string, string>.Err("Error").ToString());
+        var result = Result<string, int>.Error(42);
+
+        Assert.True(result.IsError);
+        Assert.False(result.IsOk);
+
+        Assert.Equal("Error(42)", result.ToString());
+
+        if (result is Error<int> error)
+        {
+            Assert.Equal(42, error.Value);
+        }
     }
 
     [Fact]
-    public void If_Pure_Implicit_Operator_Returns_Ok_Value()
+    public void Result_Bind_Returns_Ok_For_Ok()
     {
-        Result<string, string> result = new Pure<string>("Value");
-        Assert.Equal(Result<string, string>.Ok("Value"), result);
+        var result = Result<string, int>.Ok("text");
+        var bound = result.Bind(value => Result<int, int>.Ok(value.Length));
+
+        Assert.True(bound.IsOk);
+        Assert.False(bound.IsError);
+
+        if (bound is Ok<int> ok)
+        {
+            Assert.Equal(4, ok.Value);
+        }
     }
 
     [Fact]
-    public void If_Fail_Implicit_Operator_Returns_Err_Error()
+    public void Result_Bind_Returns_Error_For_Error()
     {
-        Result<string, string> result = new Fail<string>("Error");
-        Assert.Equal(Result<string, string>.Err("Error"), result);
+        var result = Result<int, string>.Error("error");
+        var bound = result.Bind(value => Result<string, string>.Ok(value.ToString()));
+
+        Assert.True(bound.IsError);
+        Assert.False(bound.IsOk);
+
+        if (bound is Error<string> error)
+        {
+            Assert.Equal("error", error.Value);
+        }
     }
 
     [Fact]
-    public void If_Ok_Explicit_Operator_Pure_Returns_Pure_Value()
+    public void Result_Map_Returns_Ok_For_Ok()
     {
-        var pure = (Pure<string>)Result<string, string>.Ok("Value");
-        Assert.Equal("Value", pure.Value);
+        var result = Result<string, int>.Ok("text");
+        var mapped = result.Map(value => value.Length);
+
+        Assert.True(mapped.IsOk);
+        Assert.False(mapped.IsError);
+
+        if (mapped is Ok<int> ok)
+        {
+            Assert.Equal(4, ok.Value);
+        }
     }
 
     [Fact]
-    public void If_Error_Explicit_Operator_Pure_Throws_InvalidCastException()
+    public void Result_Map_Returns_Error_For_Error()
     {
-        Assert.Throws<InvalidCastException>(() => (Pure<string>)Result<string, string>.Err("Error"));
+        var result = Result<int, string>.Error("error");
+        var mapped = result.Map(value => value.ToString());
+
+        Assert.True(mapped.IsError);
+        Assert.False(mapped.IsOk);
+
+        if (mapped is Error<string> error)
+        {
+            Assert.Equal("error", error.Value);
+        }
     }
 
     [Fact]
-    public void If_Error_Explicit_Operator_Fail_Returns_Fail_Error()
+    public void Result_MapError_Returns_Ok_For_Ok()
     {
-        var fail = (Fail<string>)Result<string, string>.Err("Error");
-        Assert.Equal("Error", fail.Error);
+        var result = Result<string, int>.Ok("text");
+        var mapped = result.MapError(value => value + 1);
+
+        Assert.True(mapped.IsOk);
+        Assert.False(mapped.IsError);
+
+        if (mapped is Ok<string> ok)
+        {
+            Assert.Equal("text", ok.Value);
+        }
     }
 
     [Fact]
-    public void If_Ok_Explicit_Operator_Fail_Throws_InvalidCastException()
+    public void Result_MapError_Returns_Error_For_Error()
     {
-        Assert.Throws<InvalidCastException>(() => (Fail<string>)Result<string, string>.Ok("Value"));
+        var result = Result<int, string>.Error("error");
+        var mapped = result.MapError(value => value + "!");
+
+        Assert.True(mapped.IsError);
+        Assert.False(mapped.IsOk);
+
+        if (mapped is Error<string> error)
+        {
+            Assert.Equal("error!", error.Value);
+        }
+    }
+
+    [Fact]
+    public void Result_DefaultValue_Returns_Ok_Value()
+    {
+        var result = Result<string, int>.Ok("text");
+
+        Assert.True(result.IsOk);
+        Assert.Equal("text", result.DefaultValue("default"));
+    }
+
+    [Fact]
+    public void Result_DefaultValue_Returns_Default_Value_For_Error()
+    {
+        var result = Result<int, string>.Error("error");
+
+        Assert.True(result.IsError);
+        Assert.Equal(42, result.DefaultValue(42));
+    }
+
+    [Fact]
+    public void Result_DefaultWith_Returns_Ok_Value()
+    {
+        var result = Result<string, int>.Ok("text");
+
+        Assert.True(result.IsOk);
+        Assert.Equal("text", result.DefaultWith(() => "default"));
+    }
+
+    [Fact]
+    public void Result_DefaultWith_Returns_Default_Value_For_Error()
+    {
+        var result = Result<int, string>.Error("error");
+
+        Assert.True(result.IsError);
+        Assert.Equal(42, result.DefaultWith(() => 42));
+    }
+
+    [Fact]
+    public void Result_ToOption_Returns_Some_For_Ok()
+    {
+        var result = Result<string, int>.Ok("text");
+        var option = result.ToOption();
+
+        Assert.True(result.IsOk);
+        Assert.True(option.IsSome);
+    }
+
+    [Fact]
+    public void Result_ToOption_Returns_None_For_Error()
+    {
+        var result = Result<int, string>.Error("error");
+        var option = result.ToOption();
+
+        Assert.True(result.IsError);
+        Assert.True(option.IsNone);
+    }
+
+    [Fact]
+    public void Ok_To_Result_Implicit_Conversion()
+    {
+        Result<string, int> result = new Ok<string>("text");
+
+        Assert.True(result.IsOk);
+        Assert.False(result.IsError);
+
+        if (result is Ok<string> ok)
+        {
+            Assert.Equal("text", ok.Value);
+        }
+    }
+
+    [Fact]
+    public void Ok_To_Result_Implicit_Conversion_Value()
+    {
+        Result<int, string> result = new Ok<int>(42);
+
+        Assert.True(result.IsOk);
+        Assert.False(result.IsError);
+
+        if (result is Ok<int> ok)
+        {
+            Assert.Equal(42, ok.Value);
+        }
+    }
+
+    [Fact]
+    public void Error_To_Result_Implicit_Conversion()
+    {
+        Result<int, string> result = new Error<string>("error");
+
+        Assert.True(result.IsError);
+        Assert.False(result.IsOk);
+
+        if (result is Error<string> error)
+        {
+            Assert.Equal("error", error.Value);
+        }
+    }
+
+    [Fact]
+    public void Error_To_Result_Implicit_Conversion_Value()
+    {
+        Result<string, int> result = new Error<int>(42);
+
+        Assert.True(result.IsError);
+        Assert.False(result.IsOk);
+
+        if (result is Error<int> error)
+        {
+            Assert.Equal(42, error.Value);
+        }
     }
 }

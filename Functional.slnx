@@ -1,10 +1,15 @@
 ﻿<Solution>
+  <Folder Name="/misc/">
+    <File Path=".github/workflows/build.yml" />
+    <File Path=".gitignore" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
   <Folder Name="/src/">
-    <Project Path="Functional\src\Functional.FSharp\Functional.FSharp.csproj" Type="Classic C#" />
-    <Project Path="Functional\src\Functional\Functional.csproj" Type="Classic C#" />
+    <Project Path="Functional\src\Functional\Functional.csproj" />
   </Folder>
   <Folder Name="/test/">
-    <Project Path="Functional\test\Functional.FSharp.Tests\Functional.FSharp.Tests.csproj" Type="Classic C#" />
-    <Project Path="Functional\test\Functional.Tests\Functional.Tests.csproj" Type="Classic C#" />
+    <Project Path="Functional\test\Functional.Tests\Functional.Tests.csproj" />
   </Folder>
 </Solution>

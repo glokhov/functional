@@ -1,57 +1,28 @@
-namespace Functional;
+﻿namespace Functional;
 
 /// <summary>
-/// Static functions.
+/// Provides a set of functions and values for creating functional types such as <see cref="Some{T}"/>,
+/// <see cref="None"/> (<see cref="Nothing"/>), <see cref="Ok{T}"/>, and <see cref="Error{T}"/>.
 /// </summary>
 public static class Prelude
 {
     /// <summary>
-    /// Creates a <c>Some</c> value.
+    /// Creates a value.
     /// </summary>
-    /// <param name="value">The input value.</param>
-    /// <typeparam name="TValue">The type of the input value.</typeparam>
-    /// <returns>The <c>Pure</c> value representation of the input value.</returns>
-    public static Pure<TValue> Some<TValue>(TValue value) where TValue : notnull => new(value);
+    public static Some<T> Some<T>(T value) where T : notnull => new(value);
 
     /// <summary>
-    /// A <c>None</c> value.
+    /// Represents the absence of a value.
     /// </summary>
-    public static Fail<Unit> None => default;
+    public static None Nothing => default;
 
     /// <summary>
-    /// Creates an <c>Ok</c> value.
+    /// Creates an OK or a Successful result.
     /// </summary>
-    /// <param name="value">The success value.</param>
-    /// <typeparam name="TValue">The type of the success value.</typeparam>
-    /// <returns>The <c>Pure</c> value representation of the success value.</returns>
-    public static Pure<TValue> Ok<TValue>(TValue value) where TValue : notnull => new(value);
+    public static Ok<T> Ok<T>(T value) where T : notnull => new(value);
 
     /// <summary>
-    /// Creates an <c>Err</c> value.
+    /// Creates an Error or a Failure result.
     /// </summary>
-    /// <param name="error">The error value.</param>
-    /// <typeparam name="TError">The type of the error value.</typeparam>
-    /// <returns>The <c>Fail</c> value representation of the error value.</returns>
-    public static Fail<TError> Err<TError>(TError error) where TError : notnull => new(error);
-
-    /// <summary>
-    /// The Identity function.
-    /// </summary>
-    /// <param name="value">The input value.</param>
-    /// <typeparam name="TValue">The type of the value.</typeparam>
-    /// <returns>The same value.</returns>
-    public static TValue Identity<TValue>(TValue value)
-    {
-        return value;
-    }
-
-    /// <summary>
-    /// Ignores the passed value.
-    /// </summary>
-    /// <param name="value">The value to ignore.</param>
-    /// <returns><c>()</c></returns>
-    public static Unit Ignore<TValue>(this TValue value)
-    {
-        return Unit.Default;
-    }
+    public static Error<T> Error<T>(T value) where T : notnull => new(value);
 }

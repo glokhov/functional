@@ -1,142 +1,151 @@
-# C# Functional Programming [![Nuget](https://img.shields.io/nuget/v/Functional.Monad)](https://www.nuget.org/packages/Functional.Monad) F# Bridge [![Nuget](https://img.shields.io/nuget/v/Functional.Monad.FSharp)](https://www.nuget.org/packages/Functional.Monad.FSharp)
-Simple ```Option``` and ```Result``` monad implementation for C#.
+# Functional.Monad
+
+[![CI](https://github.com/glokhov/functional/actions/workflows/ci.yml/badge.svg)](https://github.com/glokhov/functional/actions/workflows/ci.yml)
+[![NuGet](https://img.shields.io/nuget/v/Functional.Monad)](https://www.nuget.org/packages/Functional.Monad)
+
+`Option` and `Result` types for C#, built on unions.
+
+## Install
+
+```shell
+dotnet add package Functional.Monad
+```
+
 ## Getting started
-Use the ```global using``` directive for the whole project:
+
+Import the types and the `Prelude` factory functions, globally:
+
 ```csharp
 global using Functional;
 global using static Functional.Prelude;
 ```
-Or the ```using``` directive in a single file:
+
+or per file:
+
 ```csharp
 using Functional;
 using static Functional.Prelude;
 ```
-```Option``` monads support either some value, or no value; use ```Match``` function to get value safely:
+
+## Option
+
+`Option<TValue>` holds either a value, `Some`, or no value, `None`.
+
+In methods returning an option, use `Some` and `Nothing` from the `Prelude`:
+
 ```csharp
-Option<int> some = Some(42);
-Option<int> none = None;
-
-int someValue = some.Match(Identity, 0);
-int noneValue = none.Match(Identity, 0);
-
-Assert.Equal(42, someValue);
-Assert.Equal(0, noneValue);
+Option<int> ParseInt(string text) => int.TryParse(text, out var value) ? Some(value) : Nothing;
 ```
-Use ```Choose``` function to convert a collection of ```Option``` values to a collection of values:
+
+In local variables declared with `var`, use the create methods of `Option`:
+
 ```csharp
-List<Option<int>> input = [Some(1), None, Some(2)];
-
-List<int> output = input.Choose(Identity);
-
-Assert.Equal(2, output.Count);
-Assert.Equal(1, output[0]);
-Assert.Equal(2, output[1]);
-```
-```Result``` monads support either an ok value, or an error value; use ```Match``` function to get value safely:
-```csharp
-Result<int, string> ok = Ok(42);
-Result<int, string> err = Err("There is no answer");
-
-int okValue = ok.Match(Identity, 0);
-int errValue = err.Match(Identity, 0);
-string error = err.Match(value => value.ToString(), Identity);
-
-Assert.Equal(42, okValue);
-Assert.Equal(0, errValue);
-Assert.Equal("There is no answer", error);
-```
-An ```Option``` can be converted to a ```Result```
-```csharp
-Option<int> some = Some(42);
-Option<int> none = None;
-
-Result<int, string> ok = some.ToResult("There is no answer");
-Result<int, string> err = none.ToResult(() => "There is no answer");
-
-Assert.True(ok.IsOk);
-Assert.True(err.IsErr);
-Assert.Equal("There is no answer", err.ExpectError());
-```
-A ```Result``` can be converted to an ```Option```:
-```csharp
-Result<int, string> ok = Ok(42);
-Result<int, string> err = Err("There is no answer");
-
-Option<int> some = ok.ToOption();
-Option<int> none = err.ToOption();
+var some = Option<int>.Some(42);
+var none = Option<int>.None;
 
 Assert.True(some.IsSome);
 Assert.True(none.IsNone);
 ```
-A nullable object can be converted to an ```Option```:
+
+Match an option with `Some<T>` and `None`:
+
 ```csharp
-string? someString = "Forty two";
-string? nullString = null;
-
-Option<string> some = someString.ToOption();
-Option<string> none = nullString.ToOption();
-
-string someResult = some.Match(Identity, "none");
-string noneResult = none.Match(Identity, "none");
-
-Assert.Equal("Forty two", someResult);
-Assert.Equal("none", noneResult);
+string Describe(Option<int> option) => option switch
+{
+    Some<int> some => $"Some({some.Value})",
+    None => "nothing"
+};
 ```
-A nullable value can be converted to an ```Option```:
+
+Property patterns add conditions on the value:
+
 ```csharp
-int? someInt = 42;
-int? nullInt = null;
-
-Option<int> some = someInt.ToOption();
-Option<int> none = nullInt.ToOption();
-
-int someValue = some.Match(Identity, 0);
-int noneValue = none.Match(Identity, 0);
-
-Assert.Equal(42, someValue);
-Assert.Equal(0, noneValue);
+string Size(Option<int> option) => option switch
+{
+    Some<int> { Value: > 100 } => "large",
+    Some<int> => "small",
+    None => "nothing"
+};
 ```
-An ```Option``` can be converted to a nullable object:
+
+`Map` transforms the value, `Bind` chains option-returning methods:
+
 ```csharp
-Option<string> some = Some("Forty two");
-Option<string> none = None;
-
-string? someValue = some.ToObject();
-string? noneValue = none.ToObject();
-
-Assert.Equal("Forty two", someValue);
-Assert.Null(noneValue);
+var mapped = Option<int>.Some(42).Map(value => value * 2);      // Some(84)
+var bound = Option<string>.Some("42").Bind(ParseInt);           // Some(42)
+var empty = Option<string>.None.Bind(ParseInt);                 // None
 ```
-An ```Option``` can be converted to a nullable value:
+
+`DefaultValue` and `DefaultWith` unwrap the value:
+
 ```csharp
-Option<int> some = Some(42);
-Option<int> none = None;
-
-int? someValue = some.ToNullable();
-int? noneValue = none.ToNullable();
-
-Assert.Equal(42, someValue);
-Assert.False(noneValue.HasValue);
+var value = ParseInt("42").DefaultValue(0);                     // 42
+var fallback = ParseInt("forty two").DefaultWith(() => 0);      // 0
 ```
-A ```Result``` can be converted to a nullable object:
+
+A nullable reference converts to an option and back. Assign `null` to a nullable-typed
+variable first; the untyped `null` literal cannot be converted directly to `Option<T>`:
+
 ```csharp
-Result<string, string> ok = Ok("Forty two");
-Result<string, string> err = Err("There is no answer");
-
-string? okValue = ok.ToObject();
-string? errValue = err.ToObject();
-
-Assert.Equal("Forty two", okValue);
-Assert.Null(errValue);
+string? maybePath = null;
+Option<string> option = maybePath;
+string? path = option;
 ```
-A ```Result``` can be converted to a nullable value:
+
+## Result
+
+`Result<TValue, TError>` holds either a success value, `Ok`, or a failure value, `Error`.
+
+In methods returning a result, use `Ok` and `Error` from the `Prelude`:
+
 ```csharp
-Result<int, string> ok = Ok(42);
-Result<int, string> err = Err("There is no answer");
-
-int? okValue = ok.ToNullable();
-int? errValue = err.ToNullable();
-
-Assert.Equal(42, okValue);
-Assert.False(errValue.HasValue);
+Result<int, string> Divide(int a, int b) => b == 0 ? Error("division by zero") : Ok(a / b);
 ```
+
+In local variables declared with `var`, use the create methods of `Result`:
+
+```csharp
+var ok = Result<int, string>.Ok(42);
+var error = Result<int, string>.Error("division by zero");
+
+Assert.True(ok.IsOk);
+Assert.True(error.IsError);
+```
+
+Match a result with `Ok<T>` and `Error<T>`:
+
+```csharp
+string Describe(Result<int, string> result) => result switch
+{
+    Ok<int> ok => $"Ok({ok.Value})",
+    Error<string> error => $"Error({error.Value})"
+};
+```
+
+`Map`, `MapError` and `Bind` work on the success and failure sides:
+
+```csharp
+var mapped = Divide(84, 2).Map(value => value * 2);             // Ok(84)
+var reported = Divide(42, 0).MapError(err => err.ToUpper());    // Error(DIVISION BY ZERO)
+var bound = Divide(84, 2).Bind(value => Divide(value, 0));      // Error(division by zero)
+```
+
+`DefaultValue` and `DefaultWith` unwrap the success value:
+
+```csharp
+var value = Divide(84, 2).DefaultValue(0);                      // 42
+var fallback = Divide(42, 0).DefaultWith(() => 0);              // 0
+```
+
+## Conversions
+
+An option converts to a result, and a result converts to an option:
+
+```csharp
+var result = Option<int>.Some(42).ToResult();                   // Ok(42)
+var option = Result<int, string>.Error("error").ToOption();     // None
+```
+
+## License
+
+[MIT](LICENSE)
