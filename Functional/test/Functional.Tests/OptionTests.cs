@@ -181,32 +181,6 @@ public sealed class OptionTests
     }
 
     [Fact]
-    public void Option_ToResult_Returns_Ok_For_Some()
-    {
-        var option = Option<string>.Some("text");
-        var result = option.ToResult();
-
-        Assert.True(option.IsSome);
-        Assert.True(result.IsOk);
-
-        Assert.Equal("Some(text)", option.ToString());
-        Assert.Equal("Ok(text)", result.ToString());
-    }
-
-    [Fact]
-    public void Option_ToResult_Returns_Error_For_None()
-    {
-        var option = Option<int>.None;
-        var result = option.ToResult();
-
-        Assert.True(option.IsNone);
-        Assert.True(result.IsError);
-
-        Assert.Equal("None", option.ToString());
-        Assert.Equal("Error(())", result.ToString());
-    }
-
-    [Fact]
     public void Some_To_Option_Implicit()
     {
         Option<string> option = new Some<string>("text");

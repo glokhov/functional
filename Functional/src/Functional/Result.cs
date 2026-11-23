@@ -162,21 +162,6 @@ public union Result<T, TError>(Ok<T>, Error<TError>) where T : notnull where TEr
     }
 
     /// <summary>
-    /// Converts the result to an <see cref="Option{T}"/>.
-    /// </summary>
-    /// <returns>
-    /// An option containing the value if the result is <c>Ok</c>, otherwise <c>None</c>.
-    /// </returns>
-    public Option<T> ToOption()
-    {
-        return this switch
-        {
-            Ok<T> ok => Option<T>.Some(ok.Value),
-            Error<TError> => Option<T>.None
-        };
-    }
-
-    /// <summary>
     /// Converts an <see cref="Ok{T}"/> to a <see cref="Result{T, TError}"/>.
     /// </summary>
     public static implicit operator Result<T, TError>(Ok<T> ok) => new(ok);

@@ -239,26 +239,6 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void Result_ToOption_Returns_Some_For_Ok()
-    {
-        var result = Result<string, int>.Ok("text");
-        var option = result.ToOption();
-
-        Assert.True(result.IsOk);
-        Assert.True(option.IsSome);
-    }
-
-    [Fact]
-    public void Result_ToOption_Returns_None_For_Error()
-    {
-        var result = Result<int, string>.Error("error");
-        var option = result.ToOption();
-
-        Assert.True(result.IsError);
-        Assert.True(option.IsNone);
-    }
-
-    [Fact]
     public void Ok_To_Result_Implicit_Conversion()
     {
         Result<string, int> result = new Ok<string>("text");

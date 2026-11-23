@@ -145,22 +145,6 @@ public union Option<T>(Some<T>, None) where T : notnull
     }
 
     /// <summary>
-    /// Converts the option to a <see cref="Result{T, TError}"/>.
-    /// </summary>
-    /// <returns>
-    /// A result that is <c>Ok</c> with the value if the option is <c>Some</c>,
-    /// otherwise an <c>Error</c> with <see cref="Unit"/>.
-    /// </returns>
-    public Result<T, Unit> ToResult()
-    {
-        return this switch
-        {
-            Some<T> some => Result<T, Unit>.Ok(some.Value),
-            Functional.None => Result<T, Unit>.Error(default)
-        };
-    }
-
-    /// <summary>
     /// Converts a <see cref="Some{T}"/> to an <see cref="Option{T}"/>.
     /// </summary>
     public static implicit operator Option<T>(Some<T> some) => new(some);
