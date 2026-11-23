@@ -226,7 +226,7 @@ public sealed class ResultTests
         var result = Result<string, int>.Ok("text");
 
         Assert.True(result.IsOk);
-        Assert.Equal("text", result.Default(() => "default"));
+        Assert.Equal("text", result.Default(_ => "default"));
     }
 
     [Fact]
@@ -235,7 +235,7 @@ public sealed class ResultTests
         var result = Result<int, string>.Error("error");
 
         Assert.True(result.IsError);
-        Assert.Equal(42, result.Default(() => 42));
+        Assert.Equal(42, result.Default(_ => 42));
     }
 
     [Fact]

@@ -1,3 +1,5 @@
+using static Functional.Prelude;
+
 namespace Functional;
 
 /// <summary>
@@ -16,12 +18,12 @@ public union Result<T, TError>(Ok<T>, Error<TError>) where T : notnull where TEr
     /// <summary>
     /// Creates an OK or a Successful result.
     /// </summary>
-    public static Result<T, TError> Ok(T value) => new Ok<T>(value);
+    public static Result<T, TError> Ok(T value) => new(value);
 
     /// <summary>
     /// Creates an Error or a Failure.
     /// </summary>
-    public static Result<T, TError> Error(TError value) => new Error<TError>(value);
+    public static Result<T, TError> Error(TError value) => new(value);
 
     /// <summary>
     /// Returns true if the result is OK.
@@ -119,29 +121,21 @@ public union Result<T, TError>(Ok<T>, Error<TError>) where T : notnull where TEr
     /// <returns>The result of applying the appropriate function based on the result's state.</returns>
     public TOutput Match<TOutput>(Func<T, TOutput> okFunc, TOutput errorValue)
     {
-        return this switch
-        {
-            Ok<T> ok => okFunc(ok.Value),
-            Error<TError> _ => errorValue
-        };
+        return this is Ok<T> ok ? okFunc(ok.Value) : errorValue;
     }
 
     /// <summary>
     /// Gets the value of the result if the result is <c>Ok</c>,
-    /// otherwise evaluates <paramref name="defaultFunc"/> and returns the result.
+    /// otherwise evaluates <paramref name="defaultFunc"/> with the error and returns the result.
     /// </summary>
-    /// <param name="defaultFunc">A function that provides a default value when evaluated.</param>
+    /// <param name="defaultFunc">A function that provides a default value from the error when evaluated.</param>
     /// <returns>
     /// The result value if the result is <c>Ok</c>,
     /// otherwise the result of evaluating <paramref name="defaultFunc"/>.
     /// </returns>
-    public T Default(Func<T> defaultFunc)
+    public T Default(Func<TError, T> defaultFunc)
     {
-        return this switch
-        {
-            Ok<T> ok => ok.Value,
-            Error<TError> => defaultFunc()
-        };
+        return Match(Identity, defaultFunc);
     }
 
     /// <summary>
@@ -154,22 +148,8 @@ public union Result<T, TError>(Ok<T>, Error<TError>) where T : notnull where TEr
     /// </returns>
     public T Default(T defaultValue)
     {
-        return this switch
-        {
-            Ok<T> ok => ok.Value,
-            Error<TError> => defaultValue
-        };
+        return Match(Identity, defaultValue);
     }
-
-    /// <summary>
-    /// Converts an <see cref="Ok{T}"/> to a <see cref="Result{T, TError}"/>.
-    /// </summary>
-    public static implicit operator Result<T, TError>(Ok<T> ok) => new(ok);
-
-    /// <summary>
-    /// Converts an <see cref="Error{TError}"/> to a <see cref="Result{T, TError}"/>.
-    /// </summary>
-    public static implicit operator Result<T, TError>(Error<TError> error) => new(error);
 
     /// <summary>
     /// Returns <c>Ok(Value)</c> or <c>Error(Value)</c>.

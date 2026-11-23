@@ -1,3 +1,5 @@
+using static Functional.Prelude;
+
 namespace Functional;
 
 /// <summary>The type of optional values.</summary>
@@ -18,12 +20,12 @@ public union Option<T>(Some<T>, None) where T : notnull
     /// <summary>
     /// Creates the presence of a value.
     /// </summary>
-    public static Option<T> Some(T value) => new Some<T>(value);
+    public static Option<T> Some(T value) => new(value);
 
     /// <summary>
     /// Represents the absence of a value.
     /// </summary>
-    public static readonly Option<T> None = default(None);
+    public static readonly Option<T> None = new();
 
     /// <summary>
     /// Returns true if the option is Some.
@@ -42,11 +44,7 @@ public union Option<T>(Some<T>, None) where T : notnull
     /// <returns>An option of the output type of the binder.</returns>
     public Option<TOutput> Bind<TOutput>(Func<T, Option<TOutput>> binder) where TOutput : notnull
     {
-        return this switch
-        {
-            Some<T> some => binder(some.Value),
-            Functional.None => Option<TOutput>.None
-        };
+        return this is Some<T> some ? binder(some.Value) : Option<TOutput>.None;
     }
 
     /// <summary>
@@ -58,11 +56,7 @@ public union Option<T>(Some<T>, None) where T : notnull
     /// </returns>
     public Option<TOutput> Map<TOutput>(Func<T, TOutput> mapping) where TOutput : notnull
     {
-        return this switch
-        {
-            Some<T> some => Option<TOutput>.Some(mapping(some.Value)),
-            Functional.None => Option<TOutput>.None
-        };
+        return this is Some<T> some ? Option<TOutput>.Some(mapping(some.Value)) : Option<TOutput>.None;
     }
 
     /// <summary>
@@ -91,11 +85,7 @@ public union Option<T>(Some<T>, None) where T : notnull
     /// <returns>The result of applying the appropriate function based on the option's state.</returns>
     public TOutput Match<TOutput>(Func<T, TOutput> someFunc, Func<TOutput> noneFunc)
     {
-        return this switch
-        {
-            Some<T> some => someFunc(some.Value),
-            Functional.None => noneFunc()
-        };
+        return this is Some<T> some ? someFunc(some.Value) : noneFunc();
     }
 
     /// <summary>
@@ -106,11 +96,7 @@ public union Option<T>(Some<T>, None) where T : notnull
     /// <returns>The result of applying the appropriate function based on the option's state.</returns>
     public TOutput Match<TOutput>(Func<T, TOutput> someFunc, TOutput noneValue)
     {
-        return this switch
-        {
-            Some<T> some => someFunc(some.Value),
-            Functional.None => noneValue
-        };
+        return this is Some<T> some ? someFunc(some.Value) : noneValue;
     }
 
     /// <summary>
@@ -123,11 +109,7 @@ public union Option<T>(Some<T>, None) where T : notnull
     /// </returns>
     public T Default(Func<T> defaultFunc)
     {
-        return this switch
-        {
-            Some<T> some => some.Value,
-            Functional.None => defaultFunc()
-        };
+        return Match(Identity, defaultFunc);
     }
 
     /// <summary>
@@ -137,22 +119,8 @@ public union Option<T>(Some<T>, None) where T : notnull
     /// <returns>The option if the option is <c>Some</c>, otherwise the default value.</returns>
     public T Default(T defaultValue)
     {
-        return this switch
-        {
-            Some<T> some => some.Value,
-            Functional.None => defaultValue
-        };
+        return Match(Identity, defaultValue);
     }
-
-    /// <summary>
-    /// Converts a <see cref="Some{T}"/> to an <see cref="Option{T}"/>.
-    /// </summary>
-    public static implicit operator Option<T>(Some<T> some) => new(some);
-
-    /// <summary>
-    /// Converts a <see cref="None"/> to an <see cref="Option{T}"/>.
-    /// </summary>
-    public static implicit operator Option<T>(None none) => new(none);
 
     /// <summary>
     /// Converts a nullable value to an <see cref="Option{T}"/>.

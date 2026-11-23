@@ -25,4 +25,9 @@ public static class Prelude
     /// Creates an Error or a Failure result.
     /// </summary>
     public static Error<T> Error<T>(T value) where T : notnull => new(value);
+
+    /// <summary>
+    /// The Identity function.
+    /// </summary>
+    public static T Identity<T>(T value) => value;
 }

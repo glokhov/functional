@@ -71,9 +71,9 @@ string Size(Option<int> option) => option switch
 `Map` transforms the value, `Bind` chains option-returning methods:
 
 ```csharp
-var mapped = Option<int>.Some(42).Map(value => value * 2);      // Some(84)
-var bound = Option<string>.Some("42").Bind(ParseInt);           // Some(42)
-var empty = Option<string>.None.Bind(ParseInt);                 // None
+var mapped = Option<int>.Some(42).Map(value => value * 2);    // Some(84)
+var bound = Option<string>.Some("42").Bind(ParseInt);         // Some(42)
+var empty = Option<string>.None.Bind(ParseInt);               // None
 ```
 
 `Match` handles both cases with functions or actions. The `None` case takes a function or a value:
@@ -88,8 +88,8 @@ ParseInt("42").Match(value => Console.WriteLine(value), () => Console.WriteLine(
 `Default` unwraps the value, taking a fallback value or a function that provides it:
 
 ```csharp
-var value = ParseInt("42").Default(0);                          // 42
-var fallback = ParseInt("forty two").Default(() => 0);          // 0
+var value = ParseInt("42").Default(0);                    // 42
+var fallback = ParseInt("forty two").Default(() => 0);    // 0
 ```
 
 A nullable reference converts to an option and back. Assign `null` to a nullable-typed
@@ -142,8 +142,8 @@ var bound = Divide(84, 2).Bind(value => Divide(value, 0));      // Error(divisio
 `Match` handles both cases with functions or actions. The `Error` case takes a function or a value:
 
 ```csharp
-var text = Divide(84, 2).Match(value => $"Ok({value})", err => $"Error({err})");   // Ok(42)
-var number = Divide(42, 0).Match(value => value * 2, -1);                          // -1
+var text = Divide(84, 2).Match(value => $"Ok({value})", err => $"Error({err})");    // Ok(42)
+var number = Divide(42, 0).Match(value => value * 2, -1);                           // -1
 
 Divide(84, 2).Match(value => Console.WriteLine(value), err => Console.WriteLine(err));
 ```
@@ -151,8 +151,8 @@ Divide(84, 2).Match(value => Console.WriteLine(value), err => Console.WriteLine(
 `Default` unwraps the success value, taking a fallback value or a function that provides it:
 
 ```csharp
-var value = Divide(84, 2).Default(0);                           // 42
-var fallback = Divide(42, 0).Default(() => 0);                  // 0
+var value = Divide(84, 2).Default(0);                       // 42
+var fallback = Divide(42, 0).Default(err => err.Length);    // 16
 ```
 
 ## Conversions
@@ -160,8 +160,39 @@ var fallback = Divide(42, 0).Default(() => 0);                  // 0
 An option converts to a result, and a result converts to an option:
 
 ```csharp
-var result = Option<int>.Some(42).ToResult();                   // Ok(42)
-var option = Result<int, string>.Error("error").ToOption();     // None
+var result = Option<int>.Some(42).ToResult();                  // Ok(42)
+var option = Result<int, string>.Error("error").ToOption();    // None
+```
+
+A nullable value, reference or struct, converts to an option or a result:
+
+```csharp
+int? nullable = 42;
+var some = nullable.ToOption();    // Some(42)
+var ok = nullable.ToResult();      // Ok(42)
+```
+
+`Transpose` swaps an option of a result with a result of an option:
+
+```csharp
+var transposed = Option<Result<int, string>>.Some(Result<int, string>.Ok(42)).Transpose();    // Ok(Some(42))
+var back = Result<Option<int>, string>.Ok(Option<int>.None).Transpose();                      // None
+```
+
+## Utilities
+
+`Choose` keeps the values of the `Some` results of a function. Use `Identity` for a sequence of options:
+
+```csharp
+var numbers = new[] { "1", "x", "3" }.Choose(ParseInt);                           // 1, 3
+var values = new[] { Option<int>.Some(1), Option<int>.None }.Choose(Identity);    // 1
+```
+
+`Identity` returns its argument, and `Ignore` discards a value and returns `Unit`:
+
+```csharp
+var same = Identity(42);    // 42
+var unit = 42.Ignore();     // ()
 ```
 
 ## License

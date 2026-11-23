@@ -45,4 +45,11 @@ public sealed class PreludeTests
     {
         Assert.Equal(Result<string, int>.Error(42), Error(42));
     }
+    
+    [Fact]
+    public void Prelude_Identity()
+    {
+        Assert.Equal(42, Identity(42));
+        Assert.Equal("text", Identity("text"));
+    }
 }
