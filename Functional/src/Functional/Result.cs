@@ -1,5 +1,3 @@
-using static Functional.Prelude;
-
 namespace Functional;
 
 /// <summary>
@@ -8,32 +6,12 @@ namespace Functional;
 public union Result<T, TError>(Ok<T>, Error<TError>) where T : notnull where TError : notnull
 {
     /// <summary>
-    /// Do not use this constructor directly. Use <see cref="Result{T, TError}.Ok(T)"/>
-    /// or <see cref="Result{T, TError}.Error(TError)"/> instead.
+    /// Initializes a new instance of the <see cref="Result{T, TError}"/> struct with default values.
     /// </summary>
-    public Result() : this(new Error<TError>(default!))
+    [Obsolete("Use Ok<T> or Error<TError> instead.", true)]
+    public Result() : this(default(Error<TError>)!)
     {
     }
-
-    /// <summary>
-    /// Creates an OK or a Successful result.
-    /// </summary>
-    public static Result<T, TError> Ok(T value) => new(value);
-
-    /// <summary>
-    /// Creates an Error or a Failure.
-    /// </summary>
-    public static Result<T, TError> Error(TError value) => new(value);
-
-    /// <summary>
-    /// Returns true if the result is OK.
-    /// </summary>
-    public bool IsOk => this is Ok<T>;
-
-    /// <summary>
-    /// Returns true if the result is an Error.
-    /// </summary>
-    public bool IsError => this is Error<TError>;
 
     /// <summary>
     /// Binds the result to a function that returns another result.
@@ -44,14 +22,14 @@ public union Result<T, TError>(Ok<T>, Error<TError>) where T : notnull where TEr
         return this switch
         {
             Ok<T> ok => binder(ok.Value),
-            Error<TError> error => Result<TOutput, TError>.Error(error.Value)
+            Error<TError> error => new Error<TError>(error.Value)
         };
     }
 
     /// <summary>
     /// Maps the result to another result using a mapping function.
     /// </summary>
-    /// <param name="mapping">A function to apply to the OK result value.</param>
+    /// <param name="mapping">A function to apply to the <c>Ok</c> result value.</param>
     /// <returns>
     /// A result of the input value after applying the mapping function, or <c>Error</c> if the input is <c>Error</c>.
     /// </returns>
@@ -59,15 +37,15 @@ public union Result<T, TError>(Ok<T>, Error<TError>) where T : notnull where TEr
     {
         return this switch
         {
-            Ok<T> ok => Result<TOutput, TError>.Ok(mapping(ok.Value)),
-            Error<TError> error => Result<TOutput, TError>.Error(error.Value)
+            Ok<T> ok => new Ok<TOutput>(mapping(ok.Value)),
+            Error<TError> error => new Error<TError>(error.Value)
         };
     }
 
     /// <summary>
     /// Maps the error of the result to another error using a mapping function.
     /// </summary>
-    /// <param name="mapping">A function to apply to the Error value.</param>
+    /// <param name="mapping">A function to apply to the <c>Error</c> value.</param>
     /// <returns>
     /// A result of the input value after applying the mapping function, or <c>Ok</c> if the input is <c>Ok</c>.
     /// </returns>
@@ -75,8 +53,8 @@ public union Result<T, TError>(Ok<T>, Error<TError>) where T : notnull where TEr
     {
         return this switch
         {
-            Ok<T> ok => Result<T, TOutput>.Ok(ok.Value),
-            Error<TError> error => Result<T, TOutput>.Error(mapping(error.Value))
+            Ok<T> ok => new Ok<T>(ok.Value),
+            Error<TError> error => new Error<TOutput>(mapping(error.Value))
         };
     }
 
@@ -135,7 +113,11 @@ public union Result<T, TError>(Ok<T>, Error<TError>) where T : notnull where TEr
     /// </returns>
     public T Default(Func<TError, T> defaultFunc)
     {
-        return Match(Identity, defaultFunc);
+        return this switch
+        {
+            Ok<T> ok => ok.Value,
+            Error<TError> error => defaultFunc(error.Value)
+        };
     }
 
     /// <summary>
@@ -148,7 +130,7 @@ public union Result<T, TError>(Ok<T>, Error<TError>) where T : notnull where TEr
     /// </returns>
     public T Default(T defaultValue)
     {
-        return Match(Identity, defaultValue);
+        return this is Ok<T> ok ? ok.Value : defaultValue;
     }
 
     /// <summary>

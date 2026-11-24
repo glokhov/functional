@@ -15,7 +15,7 @@ public static class Extensions
         /// </returns>
         public Option<T> ToOption()
         {
-            return value.HasValue ? Option<T>.Some(value.Value) : Option<T>.None;
+            return value.HasValue ? new Some<T>(value.Value) : default(None);
         }
 
         /// <summary>
@@ -27,7 +27,7 @@ public static class Extensions
         /// </returns>
         public Result<T, Unit> ToResult()
         {
-            return value.HasValue ? Result<T, Unit>.Ok(value.Value) : Result<T, Unit>.Error(default);
+            return value.HasValue ? new Ok<T>(value.Value) : new Error<Unit>(default(Unit));
         }
     }
 
@@ -41,7 +41,7 @@ public static class Extensions
         /// </returns>
         public Option<T> ToOption()
         {
-            return value is null ? Option<T>.None : Option<T>.Some(value);
+            return value is null ? default(None) : new Some<T>(value);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ public static class Extensions
         /// </returns>
         public Result<T, Unit> ToResult()
         {
-            return value is null ? Result<T, Unit>.Error(default) : Result<T, Unit>.Ok(value);
+            return value is null ? new Error<Unit>(default) : new Ok<T>(value);
         }
     }
 
@@ -68,7 +68,7 @@ public static class Extensions
         /// </returns>
         public Result<T, Unit> ToResult()
         {
-            return option is Some<T> some ? Result<T, Unit>.Ok(some.Value) : Result<T, Unit>.Error(default);
+            return option is Some<T> some ? new Ok<T>(some.Value) : new Error<Unit>(default);
         }
     }
 
@@ -82,7 +82,7 @@ public static class Extensions
         /// </returns>
         public Option<T> ToOption()
         {
-            return error is Ok<T> ok ? Option<T>.Some(ok.Value) : Option<T>.None;
+            return error is Ok<T> ok ? new Some<T>(ok.Value) : default(None);
         }
     }
 
@@ -98,26 +98,26 @@ public static class Extensions
         /// </returns>
         public Result<Option<T>, TError> Transpose()
         {
-            return option.Match(Some, None);
+            return option.Match(HandleSome, HandleNone);
 
-            Result<Option<T>, TError> Some(Result<T, TError> result)
+            Result<Option<T>, TError> HandleSome(Result<T, TError> result)
             {
-                return result.Match(Ok, Error);
+                return result.Match(HandleOk, HandleError);
 
-                Result<Option<T>, TError> Ok(T value)
+                Result<Option<T>, TError> HandleOk(T value)
                 {
-                    return Result<Option<T>, TError>.Ok(Option<T>.Some(value));
+                    return new Ok<Option<T>>(new Some<T>(value));
                 }
 
-                Result<Option<T>, TError> Error(TError error)
+                Result<Option<T>, TError> HandleError(TError error)
                 {
-                    return Result<Option<T>, TError>.Error(error);
+                    return new Error<TError>(error);
                 }
             }
 
-            Result<Option<T>, TError> None()
+            Result<Option<T>, TError> HandleNone()
             {
-                return Result<Option<T>, TError>.Ok(Option<T>.None);
+                return new Ok<Option<T>>(default(None));
             }
         }
     }
@@ -134,26 +134,26 @@ public static class Extensions
         /// </returns>
         public Option<Result<T, TError>> Transpose()
         {
-            return result.Match(Ok, Error);
+            return result.Match(HandleOk, HandleError);
 
-            Option<Result<T, TError>> Ok(Option<T> option)
+            Option<Result<T, TError>> HandleOk(Option<T> option)
             {
-                return option.Match(Some, None);
+                return option.Match(HandleSome, HandleNone);
 
-                Option<Result<T, TError>> Some(T value)
+                Option<Result<T, TError>> HandleSome(T value)
                 {
-                    return Option<Result<T, TError>>.Some(Result<T, TError>.Ok(value));
+                    return new Some<Result<T, TError>>(new Ok<T>(value));
                 }
 
-                Option<Result<T, TError>> None()
+                Option<Result<T, TError>> HandleNone()
                 {
-                    return Option<Result<T, TError>>.None;
+                    return default(None);
                 }
             }
 
-            Option<Result<T, TError>> Error(TError error)
+            Option<Result<T, TError>> HandleError(TError error)
             {
-                return Option<Result<T, TError>>.Some(Result<T, TError>.Error(error));
+                return new Some<Result<T, TError>>(new Error<TError>(error));
             }
         }
     }

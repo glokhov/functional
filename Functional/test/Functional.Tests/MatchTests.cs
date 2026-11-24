@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using Functional;
-using static Functional.Prelude;
 
 // ReSharper disable once CheckNamespace
 namespace Match.Tests;
@@ -9,7 +8,7 @@ public sealed class MatchTests
 {
     private static Option<int> ParseInt(string text)
     {
-        return int.TryParse(text, out var value) ? Some(value) : Nothing;
+        return int.TryParse(text, out var value) ? new Some<int>(value) : new None();
     }
 
     private static string Describe(Option<int> option)
@@ -24,7 +23,9 @@ public sealed class MatchTests
 
     private static Result<double, string> ParseDouble(string text)
     {
-        return double.TryParse(text, CultureInfo.InvariantCulture, out var value) ? Ok(value) : Error("not a number");
+        return double.TryParse(text, CultureInfo.InvariantCulture, out var value)
+            ? new Ok<double>(value)
+            : new Error<string>("not a number");
     }
 
     private static string Describe(Result<double, string> result)

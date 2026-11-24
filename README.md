@@ -13,38 +13,32 @@ dotnet add package Functional.Monad
 
 ## Getting started
 
-Import the types and the `Prelude` factory functions, globally:
+Import the types, globally:
 
 ```csharp
 global using Functional;
-global using static Functional.Prelude;
 ```
 
 or per file:
 
 ```csharp
 using Functional;
-using static Functional.Prelude;
 ```
 
 ## Option
 
 `Option<TValue>` holds either a value, `Some`, or no value, `None`.
 
-In methods returning an option, use `Some` and `Nothing` from the `Prelude`:
+Create an option from a `Some<T>` or `None` value; both convert implicitly to `Option<T>`:
 
 ```csharp
-Option<int> ParseInt(string text) => int.TryParse(text, out var value) ? Some(value) : Nothing;
-```
+Option<int> ParseInt(string text) => int.TryParse(text, out var value) ? new Some<int>(value) : default(None);
 
-In local variables declared with `var`, use the create methods of `Option`:
+Option<int> some = new Some<int>(42);
+Option<int> none = default(None);
 
-```csharp
-var some = Option<int>.Some(42);
-var none = Option<int>.None;
-
-Assert.True(some.IsSome);
-Assert.True(none.IsNone);
+Assert.True(some is Some<int>);
+Assert.True(none is None);
 ```
 
 Match an option with `Some<T>` and `None`:
@@ -71,9 +65,11 @@ string Size(Option<int> option) => option switch
 `Map` transforms the value, `Bind` chains option-returning methods:
 
 ```csharp
-var mapped = Option<int>.Some(42).Map(value => value * 2);    // Some(84)
-var bound = Option<string>.Some("42").Bind(ParseInt);         // Some(42)
-var empty = Option<string>.None.Bind(ParseInt);               // None
+Option<int> Half(int number) => number % 2 == 0 ? new Some<int>(number / 2) : default(None);
+
+var mapped = ParseInt("42").Map(value => value * 2);    // Some(84)
+var bound = ParseInt("42").Bind(Half);                  // Some(21)
+var empty = ParseInt("forty two").Bind(Half);           // None
 ```
 
 `Match` handles both cases with functions or actions. The `None` case takes a function or a value:
@@ -105,20 +101,16 @@ string? path = option;
 
 `Result<TValue, TError>` holds either a success value, `Ok`, or a failure value, `Error`.
 
-In methods returning a result, use `Ok` and `Error` from the `Prelude`:
+Create a result from an `Ok<T>` or `Error<T>` value; both convert implicitly to `Result<T, TError>`:
 
 ```csharp
-Result<int, string> Divide(int a, int b) => b == 0 ? Error("division by zero") : Ok(a / b);
-```
+Result<int, string> Divide(int a, int b) => b == 0 ? new Error<string>("division by zero") : new Ok<int>(a / b);
 
-In local variables declared with `var`, use the create methods of `Result`:
+Result<int, string> ok = new Ok<int>(42);
+Result<int, string> error = new Error<string>("division by zero");
 
-```csharp
-var ok = Result<int, string>.Ok(42);
-var error = Result<int, string>.Error("division by zero");
-
-Assert.True(ok.IsOk);
-Assert.True(error.IsError);
+Assert.True(ok is Ok<int>);
+Assert.True(error is Error<string>);
 ```
 
 Match a result with `Ok<T>` and `Error<T>`:
@@ -160,8 +152,8 @@ var fallback = Divide(42, 0).Default(err => err.Length);    // 16
 An option converts to a result, and a result converts to an option:
 
 ```csharp
-var result = Option<int>.Some(42).ToResult();                  // Ok(42)
-var option = Result<int, string>.Error("error").ToOption();    // None
+var result = ParseInt("42").ToResult();                        // Ok(42)
+var option = Divide(42, 0).ToOption();                         // None
 ```
 
 A nullable value, reference or struct, converts to an option or a result:
@@ -175,24 +167,28 @@ var ok = nullable.ToResult();      // Ok(42)
 `Transpose` swaps an option of a result with a result of an option:
 
 ```csharp
-var transposed = Option<Result<int, string>>.Some(Result<int, string>.Ok(42)).Transpose();    // Ok(Some(42))
-var back = Result<Option<int>, string>.Ok(Option<int>.None).Transpose();                      // None
+Option<Result<int, string>> some = new Some<Result<int, string>>(new Ok<int>(42));
+Result<Option<int>, string> none = new Ok<Option<int>>(default(None));
+
+var transposed = some.Transpose();    // Ok(Some(42))
+var back = none.Transpose();          // None
 ```
 
 ## Utilities
 
-`Choose` keeps the values of the `Some` results of a function. Use `Identity` for a sequence of options:
+`Choose` keeps the values of the `Some` results of a function:
 
 ```csharp
-var numbers = new[] { "1", "x", "3" }.Choose(ParseInt);                           // 1, 3
-var values = new[] { Option<int>.Some(1), Option<int>.None }.Choose(Identity);    // 1
+Option<int> Identity(Option<int> option) => option;
+
+var numbers = new[] { "1", "x", "3" }.Choose(ParseInt);                                 // 1, 3
+var values = new Option<int>[] { new Some<int>(1), default(None) }.Choose(Identity);    // 1
 ```
 
-`Identity` returns its argument, and `Ignore` discards a value and returns `Unit`:
+`Ignore` discards a value and returns `Unit`:
 
 ```csharp
-var same = Identity(42);    // 42
-var unit = 42.Ignore();     // ()
+var unit = 42.Ignore();    // ()
 ```
 
 ## License

@@ -7,21 +7,11 @@ public sealed class OptionTests
     {
         Option<string> option = default;
 
-        Assert.False(option.IsNone);
-        Assert.False(option.IsSome);
+        Assert.False(option is None);
+        Assert.False(option is Some<string>);
+
         Assert.Null(option.Value);
         Assert.Equal("", $"{option}");
-    }
-
-    [Fact]
-    public void Default_Constructor_Returns_None()
-    {
-        var option = new Option<string>();
-
-        Assert.True(option.IsNone);
-        Assert.False(option.IsSome);
-        Assert.NotNull(option.Value);
-        Assert.Equal("None", $"{option}");
     }
 
     [Fact]
@@ -29,28 +19,30 @@ public sealed class OptionTests
     {
         var option = new Option<string>("text");
 
-        Assert.True(option.IsSome);
-        Assert.False(option.IsNone);
+        Assert.Equal("Some(text)", option.ToString());
+
+        Assert.True(option is Some<string>);
+        Assert.False(option is None);
     }
 
     [Fact]
     public void None_Constructor_Creates_None()
     {
-       var option = new Option<string>(default(None));
+        var option = new Option<string>(default(None));
 
-        Assert.True(option.IsNone);
-        Assert.False(option.IsSome);
+        Assert.Equal("None", option.ToString());
+
+        Assert.True(option is None);
+        Assert.False(option is Some<string>);
     }
 
     [Fact]
     public void Option_Matches_On_Some()
     {
-        var option = Option<string>.Some("text");
+        Option<string> option = new Some<string>("text");
 
-        Assert.True(option.IsSome);
-        Assert.False(option.IsNone);
-
-        Assert.Equal("Some(text)", $"{option}");
+        Assert.True(option is Some<string>);
+        Assert.False(option is None);
 
         if (option is Some<string> some)
         {
@@ -61,12 +53,10 @@ public sealed class OptionTests
     [Fact]
     public void Option_Matches_On_Some_Value()
     {
-        var option = Option<int>.Some(42);
+        Option<int> option = new Some<int>(42);
 
-        Assert.True(option.IsSome);
-        Assert.False(option.IsNone);
-
-        Assert.Equal("Some(42)", option.ToString());
+        Assert.True(option is Some<int>);
+        Assert.False(option is None);
 
         if (option is Some<int> some)
         {
@@ -77,12 +67,10 @@ public sealed class OptionTests
     [Fact]
     public void Option_Matches_On_None()
     {
-        var option = Option<string>.None;
+        Option<string> option = default(None);
 
-        Assert.True(option.IsNone);
-        Assert.False(option.IsSome);
-
-        Assert.Equal("None", option.ToString());
+        Assert.True(option is None);
+        Assert.False(option is Some<string>);
 
         if (option is not None)
         {
@@ -93,11 +81,12 @@ public sealed class OptionTests
     [Fact]
     public void Option_Binds_Returns_Some_For_Some()
     {
-        var option = Option<string>.Some("text");
-        var bound = option.Bind(value => Option<int>.Some(value.Length));
+        Option<string> option = new Some<string>("text");
 
-        Assert.True(bound.IsSome);
-        Assert.False(bound.IsNone);
+        var bound = option.Bind(value => (Option<int>)new Some<int>(value.Length));
+
+        Assert.True(bound is Some<int>);
+        Assert.False(bound is None);
 
         if (bound is Some<int> some)
         {
@@ -108,11 +97,12 @@ public sealed class OptionTests
     [Fact]
     public void Option_Binds_Returns_None_For_None()
     {
-        var option = Option<string>.None;
-        var bound = option.Bind(value => Option<int>.Some(value.Length));
+        Option<string> option = default(None);
 
-        Assert.True(bound.IsNone);
-        Assert.False(bound.IsSome);
+        var bound = option.Bind(value => (Option<int>)new Some<int>(value.Length));
+
+        Assert.True(bound is None);
+        Assert.False(bound is Some<int>);
 
         Assert.True(bound is None);
     }
@@ -120,11 +110,12 @@ public sealed class OptionTests
     [Fact]
     public void Option_Map_Returns_Some_For_Some()
     {
-        var option = Option<string>.Some("text");
+        Option<string> option = new Some<string>("text");
+
         var mapped = option.Map(value => value.Length);
 
-        Assert.True(mapped.IsSome);
-        Assert.False(mapped.IsNone);
+        Assert.True(mapped is Some<int>);
+        Assert.False(mapped is None);
 
         if (mapped is Some<int> some)
         {
@@ -135,11 +126,12 @@ public sealed class OptionTests
     [Fact]
     public void Option_Map_Returns_None_For_None()
     {
-        var option = Option<string>.None;
+        Option<string> option = default(None);
+
         var mapped = option.Map(value => value.Length);
 
-        Assert.True(mapped.IsNone);
-        Assert.False(mapped.IsSome);
+        Assert.True(mapped is None);
+        Assert.False(mapped is Some<int>);
 
         Assert.True(mapped is None);
     }
@@ -147,7 +139,8 @@ public sealed class OptionTests
     [Fact]
     public void Option_DefaultValue_Returns_Value_For_Some()
     {
-        var option = Option<string>.Some("text");
+        Option<string> option = new Some<string>("text");
+
         var value = option.Default("default");
 
         Assert.Equal("text", value);
@@ -156,7 +149,8 @@ public sealed class OptionTests
     [Fact]
     public void Option_DefaultValue_Returns_Default_For_None()
     {
-        var option = Option<string>.None;
+        Option<string> option = default(None);
+
         var value = option.Default("default");
 
         Assert.Equal("default", value);
@@ -165,7 +159,8 @@ public sealed class OptionTests
     [Fact]
     public void Option_DefaultWith_Returns_Value_For_Some()
     {
-        var option = Option<string>.Some("text");
+        Option<string> option = new Some<string>("text");
+
         var value = option.Default(() => "default");
 
         Assert.Equal("text", value);
@@ -174,7 +169,8 @@ public sealed class OptionTests
     [Fact]
     public void Option_DefaultWith_Returns_Default_For_None()
     {
-        var option = Option<string>.None;
+        Option<string> option = default(None);
+
         var value = option.Default(() => "default");
 
         Assert.Equal("default", value);
@@ -185,8 +181,8 @@ public sealed class OptionTests
     {
         Option<string> option = new Some<string>("text");
 
-        Assert.True(option.IsSome);
-        Assert.False(option.IsNone);
+        Assert.True(option is Some<string>);
+        Assert.False(option is None);
 
         if (option is Some<string> some)
         {
@@ -199,8 +195,8 @@ public sealed class OptionTests
     {
         Option<int> option = new Some<int>(42);
 
-        Assert.True(option.IsSome);
-        Assert.False(option.IsNone);
+        Assert.True(option is Some<int>);
+        Assert.False(option is None);
 
         if (option is Some<int> some)
         {
@@ -211,10 +207,10 @@ public sealed class OptionTests
     [Fact]
     public void None_To_Option_Implicit()
     {
-        Option<string> option = (None)default;
+        Option<string> option = default(None);
 
-        Assert.True(option.IsNone);
-        Assert.False(option.IsSome);
+        Assert.True(option is None);
+        Assert.False(option is Some<string>);
 
         if (option is not None)
         {
@@ -265,7 +261,7 @@ public sealed class OptionTests
     [Fact]
     public void Null_To_Option_Implicit()
     {
-        Option<string> option = (string?)null;
+        Option<string> option = null;
 
         if (option is not None)
         {
@@ -276,7 +272,7 @@ public sealed class OptionTests
     [Fact]
     public void Option_To_Null_Implicit()
     {
-        Option<string> option = (string?)null;
+        Option<string> option = null;
         string? value = option;
 
         Assert.Null(value);
@@ -285,7 +281,8 @@ public sealed class OptionTests
     [Fact]
     public void Option_Match_Action_Invokes_Some_Action_For_Some()
     {
-        var option = Option<int>.Some(42);
+        Option<int> option = new Some<int>(42);
+
         var someValue = 0;
         var noneCalled = false;
 
@@ -298,7 +295,8 @@ public sealed class OptionTests
     [Fact]
     public void Option_Match_Action_Invokes_None_Action_For_None()
     {
-        var option = Option<int>.None;
+        Option<int> option = default(None);
+
         var someCalled = false;
         var noneCalled = false;
 
@@ -311,7 +309,8 @@ public sealed class OptionTests
     [Fact]
     public void Option_Match_Func_Returns_Some_Result_For_Some()
     {
-        var option = Option<string>.Some("text");
+        Option<string> option = new Some<string>("text");
+
         var length = option.Match(value => value.Length, () => -1);
 
         Assert.Equal(4, length);
@@ -320,7 +319,8 @@ public sealed class OptionTests
     [Fact]
     public void Option_Match_Func_Returns_None_Result_For_None()
     {
-        var option = Option<string>.None;
+        Option<string> option = default(None);
+
         var length = option.Match(value => value.Length, () => -1);
 
         Assert.Equal(-1, length);
@@ -329,7 +329,8 @@ public sealed class OptionTests
     [Fact]
     public void Option_Match_Func_Does_Not_Evaluate_None_Func_For_Some()
     {
-        var option = Option<string>.Some("text");
+        Option<string> option = new Some<string>("text");
+
         var noneCalled = false;
 
         option.Match(value => value.Length, () =>
@@ -344,7 +345,8 @@ public sealed class OptionTests
     [Fact]
     public void Option_Match_Func_Does_Not_Evaluate_Some_Func_For_None()
     {
-        var option = Option<string>.None;
+        Option<string> option = default(None);
+
         var someCalled = false;
 
         option.Match(value =>
@@ -359,7 +361,8 @@ public sealed class OptionTests
     [Fact]
     public void Option_Match_Value_Returns_Some_Result_For_Some()
     {
-        var option = Option<string>.Some("text");
+        Option<string> option = new Some<string>("text");
+
         var length = option.Match(value => value.Length, -1);
 
         Assert.Equal(4, length);
@@ -368,7 +371,8 @@ public sealed class OptionTests
     [Fact]
     public void Option_Match_Value_Returns_None_Value_For_None()
     {
-        var option = Option<string>.None;
+        Option<string> option = default(None);
+
         var length = option.Match(value => value.Length, -1);
 
         Assert.Equal(-1, length);

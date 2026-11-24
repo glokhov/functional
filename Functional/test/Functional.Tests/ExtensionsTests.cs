@@ -1,5 +1,3 @@
-using static Functional.Prelude;
-
 namespace Functional.Tests;
 
 public sealed class ExtensionsTests
@@ -7,7 +5,7 @@ public sealed class ExtensionsTests
     [Fact]
     public void ToOption_Returns_Some()
     {
-        Assert.True("text".ToOption().IsSome);
+        Assert.True("text".ToOption() is Some<string>);
     }
 
     [Fact]
@@ -15,13 +13,13 @@ public sealed class ExtensionsTests
     {
         string? nullable = null;
 
-        Assert.True(nullable.ToOption().IsNone);
+        Assert.True(nullable.ToOption() is None);
     }
 
     [Fact]
     public void ToResult_Returns_Ok()
     {
-        Assert.True("text".ToResult().IsOk);
+        Assert.True("text".ToResult() is Ok<string>);
     }
 
     [Fact]
@@ -29,7 +27,7 @@ public sealed class ExtensionsTests
     {
         string? nullable = null;
 
-        Assert.True(nullable.ToResult().IsError);
+        Assert.True(nullable.ToResult() is Error<Unit>);
     }
 
     [Fact]
@@ -37,7 +35,7 @@ public sealed class ExtensionsTests
     {
         int? nullable = 42;
 
-        Assert.Equal(Option<int>.Some(42), nullable.ToOption());
+        Assert.Equal(new Some<int>(42), nullable.ToOption());
     }
 
     [Fact]
@@ -45,7 +43,7 @@ public sealed class ExtensionsTests
     {
         int? nullable = null;
 
-        Assert.True(nullable.ToOption().IsNone);
+        Assert.True(nullable.ToOption() is None);
     }
 
     [Fact]
@@ -61,17 +59,17 @@ public sealed class ExtensionsTests
     {
         int? nullable = null;
 
-        Assert.True(nullable.ToResult().IsError);
+        Assert.True(nullable.ToResult() is Error<Unit>);
     }
 
     [Fact]
     public void Option_ToResult_Returns_Ok_For_Some()
     {
-        var option = Option<string>.Some("text");
+        Option<string> option = new Some<string>("text");
         var result = option.ToResult();
 
-        Assert.True(option.IsSome);
-        Assert.True(result.IsOk);
+        Assert.True(option is Some<string>);
+        Assert.True(result is Ok<string>);
 
         Assert.Equal("Some(text)", option.ToString());
         Assert.Equal("Ok(text)", result.ToString());
@@ -80,11 +78,11 @@ public sealed class ExtensionsTests
     [Fact]
     public void Option_ToResult_Returns_Error_For_None()
     {
-        var option = Option<int>.None;
+        Option<int> option = default(None);
         var result = option.ToResult();
 
-        Assert.True(option.IsNone);
-        Assert.True(result.IsError);
+        Assert.True(option is None);
+        Assert.True(result is Error<Unit>);
 
         Assert.Equal("None", option.ToString());
         Assert.Equal("Error(())", result.ToString());
@@ -93,31 +91,31 @@ public sealed class ExtensionsTests
     [Fact]
     public void Result_ToOption_Returns_Some_For_Ok()
     {
-        var result = Result<string, int>.Ok("text");
+        Result<string, int> result = new Ok<string>("text");
         var option = result.ToOption();
 
-        Assert.True(result.IsOk);
-        Assert.True(option.IsSome);
+        Assert.True(result is Ok<string>);
+        Assert.True(option is Some<string>);
     }
 
     [Fact]
     public void Result_ToOption_Returns_None_For_Error()
     {
-        var result = Result<int, string>.Error("error");
+        Result<int, string> result = new Error<string>("error");
         var option = result.ToOption();
 
-        Assert.True(result.IsError);
-        Assert.True(option.IsNone);
+        Assert.True(result is Error<string>);
+        Assert.True(option is None);
     }
 
     [Fact]
     public void Option_Transpose_Returns_Ok_For_Some()
     {
-        var option = Option<Result<string, int>>.Some(Result<string, int>.Ok("text"));
+        Option<Result<string, int>> option = new Some<Result<string, int>>(new Ok<string>("text"));
         var result = option.Transpose();
 
-        Assert.True(option.IsSome);
-        Assert.True(result.IsOk);
+        Assert.True(option is Some<Result<string, int>>);
+        Assert.True(result is Ok<Option<string>>);
 
         Assert.Equal("Some(Ok(text))", option.ToString());
         Assert.Equal("Ok(Some(text))", result.ToString());
@@ -126,11 +124,11 @@ public sealed class ExtensionsTests
     [Fact]
     public void Option_Transpose_Returns_Error_For_Some_Error()
     {
-        var option = Option<Result<string, int>>.Some(Result<string, int>.Error(42));
+        Option<Result<string, int>> option = new Some<Result<string, int>>(new Error<int>(42));
         var result = option.Transpose();
 
-        Assert.True(option.IsSome);
-        Assert.True(result.IsError);
+        Assert.True(option is Some<Result<string, int>>);
+        Assert.True(result is Error<int>);
 
         Assert.Equal("Some(Error(42))", option.ToString());
         Assert.Equal("Error(42)", result.ToString());
@@ -139,11 +137,11 @@ public sealed class ExtensionsTests
     [Fact]
     public void Option_Transpose_Returns_None_For_None()
     {
-        var option = Option<Result<string, int>>.None;
+        Option<Result<string, int>> option = default(None);
         var result = option.Transpose();
 
-        Assert.True(option.IsNone);
-        Assert.True(result.IsOk);
+        Assert.True(option is None);
+        Assert.True(result is Ok<Option<string>>);
 
         Assert.Equal("None", option.ToString());
         Assert.Equal("Ok(None)", result.ToString());
@@ -152,11 +150,11 @@ public sealed class ExtensionsTests
     [Fact]
     public void Result_Transpose_Returns_Some_For_Ok()
     {
-        var result = Result<Option<string>, int>.Ok(Option<string>.Some("text"));
+        Result<Option<string>, int> result = new Ok<Option<string>>(new Some<string>("text"));
         var option = result.Transpose();
 
-        Assert.True(result.IsOk);
-        Assert.True(option.IsSome);
+        Assert.True(result is Ok<Option<string>>);
+        Assert.True(option is Some<Result<string, int>>);
 
         Assert.Equal("Ok(Some(text))", result.ToString());
         Assert.Equal("Some(Ok(text))", option.ToString());
@@ -165,11 +163,11 @@ public sealed class ExtensionsTests
     [Fact]
     public void Result_Transpose_Returns_None_For_Ok_None()
     {
-        var result = Result<Option<string>, int>.Ok(Option<string>.None);
+        Result<Option<string>, int> result = new Ok<Option<string>>(default(None));
         var option = result.Transpose();
 
-        Assert.True(result.IsOk);
-        Assert.True(option.IsNone);
+        Assert.True(result is Ok<Option<string>>);
+        Assert.True(option is None);
 
         Assert.Equal("Ok(None)", result.ToString());
         Assert.Equal("None", option.ToString());
@@ -178,20 +176,20 @@ public sealed class ExtensionsTests
     [Fact]
     public void Result_Transpose_Returns_Some_Error_For_Error()
     {
-        var result = Result<Option<string>, int>.Error(42);
+        Result<Option<string>, int> result = new Error<int>(42);
         var option = result.Transpose();
 
-        Assert.True(result.IsError);
-        Assert.True(option.IsSome);
+        Assert.True(result is Error<int>);
+        Assert.True(option is Some<Result<string, int>>);
 
         Assert.Equal("Error(42)", result.ToString());
         Assert.Equal("Some(Error(42))", option.ToString());
     }
 
     [Fact]
-    public void Chooser_Plus_Identity()
+    public void Choose_With_Identity_Returns_Values_Of_Some()
     {
-        List<Option<int>> source = [Some(1), Nothing, Some(2)];
+        List<Option<int>> source = [new Some<int>(1), new None(), new Some<int>(2)];
 
         var result = source.Choose(Identity);
 
@@ -216,11 +214,16 @@ public sealed class ExtensionsTests
 
     private static Option<int> ParseInt(string text)
     {
-        return int.TryParse(text, out var value) ? Option<int>.Some(value) : Option<int>.None;
+        return int.TryParse(text, out var value) ? new Some<int>(value) : default(None);
+    }
+
+    private static Option<int> Identity(Option<int> option)
+    {
+        return option;
     }
 
     [Fact]
-    public void Prelude_Ignore()
+    public void Ignore_Returns_Unit()
     {
         Assert.Equal(default, 42.Ignore());
         Assert.Equal(default, "text".Ignore());
